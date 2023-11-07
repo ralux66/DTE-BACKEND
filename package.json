@@ -1,0 +1,28 @@
+{
+  "name": "emisiondte1",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "start:dev": "nodemon ./bin/www"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "body-parser": "^1.20.2",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.1",
+    "pg-promise": "^11.5.4",
+    "sequelize": "^6.33.0",
+    "sqlite": "^5.0.1",
+    "sqlite3": "^5.1.6",
+    "uuid": "^9.0.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
