@@ -15,8 +15,8 @@ module.exports = {
      * @param {*} req 
      * @param {*} res 
      */
-  
-  
+
+
     /**
      * Find all games
      * 
@@ -29,13 +29,12 @@ module.exports = {
      * @param {*} _ 
      * @param {*} res 
      */
-    list(_, req, res) {
+    async listCustomer(_, req, res) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'List all the games'
-        return customer
-            .findAll({})
-            .then(customer => res.status(200).send(customer))
-            .catch(error => res.status(400).send(error))
+        return await customer.findAll({});
+           /*  .then(customer => res.status(200).send(customer))
+            .catch(error => res.status(400).send(error)) */
     },
 
     /**
@@ -50,41 +49,21 @@ module.exports = {
      * @param {*} req 
      * @param {*} res 
      */
-    async find(req, res) {
+    async findCustomer(req, res) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'Find a game'
-        return customer
+        return await customer
             .findOne({
                 where: {
-                    Status: req.body.Status,
+                    nit: req.body.nit,
                 }
-            })
-            .then(customer => res.status(200).send(customer))
-            .catch(error => res.status(400).send(error))
+            });
+          
     },
 
-    async submitBill(req, res) {
-        customers.findOne({
-            where: {
-                Status: req.body.Status,
-                customerguid: req.body.customerguid
-            }
-        })
-            .then(customers =>
-                customer
-                    .findOne({
-                        where: {
-                            Status: 'P',
-                            CompanyId: customers.id
-                        }
-                    })
-                    .then(customer => console.log('Objeto: >>>>>' + crearBillDte(customers, customer)))
-                    .catch(error => res.status(400).send(error))
-            )
-            .catch(error => res.status(400).send(error));
-    },
 
-    async create(element) {
+
+    async createCustomer(req) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'Create a new game'
         const response = await customer
@@ -93,29 +72,28 @@ module.exports = {
                     RecLoc: element.RecLoc ?? "",
                 },
                 defaults: {
-                    CompanyId: 1,
-                    RecLoc: element.RecLoc,
-                    SegSeqNbr: element.SegSeqNbr,
-                    RecLoc: element.RecLoc,
-                    SegSeqNbr: element.SegSeqNbr,
-                    NbrOfPax: element.NbrOfPax,
-                    ArcIata: element.ArcIata,
-                    FirstName: element.FirstName,
-                    LastName: element.LastName,
-                    Email: 'ralux.zepeda@gmail.com',
-                    BookingDate: element.BookingDate,
-                    FlightDate: element.FlightDate,
-                    SegmentOrigin: element.SegmentOrigin,
-                    SegmentDest: element.SegmentDest,
-                    Base: element.Base.toFixed(2),
-                    CurrencyBase: element.CurrencyBase,
-                    SV: element.SV.toFixed(2),
-                    Status: 'P'
+                    customerguid: req.body.customerguid,
+                    nombre: req.body.nombre,
+                    nombreComercial: req.body.nombreComercial,
+                    nit: req.body.nit,
+                    nrc: req.body.nrc,
+                    tipoEstablecimiento: req.body.tipoEstablecimiento,
+                    tipoMoneda: req.body.tipoMoneda,
+                    telefono: req.body.telefono,
+                    correo: req.body.correo,
+                    codActividad: req.body.codActividad,
+                    descActividad: req.body.descActividad,
+                    departamento: req.body.departamento,
+                    municipio: req.body.municipio,
+                    complemento: req.body.complemento,
+                    codEstableMH: req.body.codEstableMH,
+                    codEstable: req.body.codEstable,
+                    codPuntoVentaMH: req.body.codPuntoVentaMH,
+                    codPuntoVenta: req.body.codPuntoVenta
                 }
             });
-        //throw new Error('Error al crear el registro');
+
         return response;
-        /* .then((bill) =>  bill)
-        .catch((error) => error) */
+
     },
 }

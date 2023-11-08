@@ -16,7 +16,7 @@ module.exports = {
      * @param {*} req 
      * @param {*} res 
      */
-    findOrCreate(req, res) {
+    findOrCreateBill(req, res) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'Create a new game'
 
@@ -57,7 +57,7 @@ module.exports = {
         //console.table('OTRO CONSOLE');
     },
 
-    BulkCreate(req, res) {
+    BulkCreateBill(req, res) {
         const workbook_response = utility.readExcelProcess();
         let objBill = [];
         var billsToCreate = [];
@@ -147,7 +147,7 @@ module.exports = {
             .catch(error => res.status(400).send(error));
     },
 
-    createOne(req, res) {
+    createOneBill(req, res) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'Create a new game'
         let workbook_response = utility.readExcelProcess();
@@ -197,7 +197,7 @@ module.exports = {
      * @param {*} _ 
      * @param {*} res 
      */
-    list(_, req, res) {
+    listBill(_, req, res) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'List all the games'
         return bill
@@ -218,7 +218,7 @@ module.exports = {
      * @param {*} req 
      * @param {*} res 
      */
-    async find(req, res) {
+    async findBill(req, res) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'Find a game'
         return bill
@@ -233,8 +233,7 @@ module.exports = {
 
     async submitBill(req, res) {
         customers.findOne({
-            where: {
-                Status: req.body.Status,
+            where: {                 
                 customerguid: req.body.customerguid
             }
         })
@@ -243,16 +242,18 @@ module.exports = {
                     .findOne({
                         where: {
                             Status: 'P',
-                            CompanyId: customers.id
+                            customerguid: customers.customerguid
                         }
                     })
-                    .then(bill => console.log('Objeto: >>>>>' + crearBillDte(customers, bill)))
+                    .then(bill =>{
+                        console.log('Objeto: >>>>>' + crearBillDte(customers, bill))
+                    })
                     .catch(error => res.status(400).send(error))
             )
             .catch(error => res.status(400).send(error));
     },
 
-    async create(element) {
+    async createBill(element) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'Create a new game'
         const response = await bill

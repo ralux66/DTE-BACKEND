@@ -9,9 +9,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      CompanyId: {
-        type: Sequelize.INTEGER
+      customerguid: {
+        type: Sequelize.STRING
       },
+      
       RecLoc: {
         type: Sequelize.STRING
       },

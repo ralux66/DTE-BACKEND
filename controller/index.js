@@ -1,11 +1,14 @@
-const { BulkCreate, createOne, find, findOrCreate, list,create,submitBill } = require('./bill.controller');
-
+const { BulkCreateBill, createOneBill, findBill, findOrCreateBill, listBill,createBill,submitBill } = require('./bill.controller');
+const { createCustomer, listCustomer, findCustomer} =require('./customer.controller');
 module.exports = {
-    BulkCreate,
-    createOne,
-    find,
-    findOrCreate,
-    list,
-    create,
-    submitBill
+    BulkCreateBill,
+    createOneBill,
+    findBill,
+    findOrCreateBill,
+    listBill,
+    createBill,
+    submitBill,
+    createCustomer,
+    listCustomer,
+    findCustomer
 }

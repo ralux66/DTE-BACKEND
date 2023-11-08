@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   bills.init({
-    CompanyId: DataTypes.INTEGER,
+    customerguid: DataTypes.STRING,
     RecLoc: DataTypes.STRING,
     SegSeqNbr: DataTypes.INTEGER,
     NbrOfPax: DataTypes.INTEGER,

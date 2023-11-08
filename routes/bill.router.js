@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { readExcel } = require("../utility");
-const { submitBill, list, find, createOne, BulkCreate, create } = require('../controller');
+const { submitBill, listBill, findBill, createOneBille, BulkCreateBille, createBill, findBill, createOneBill, BulkCreateBill } = require('../controller');
 
 router.get('/api', (req, res) => res.status(200).send({
     message: '¡Esta es una buena señal! Nuestro Node.js está funcionando correctamente ;)',
@@ -10,35 +10,24 @@ router.get('/api', (req, res) => res.status(200).send({
 
 router.get('/api/bill/create', function (req, res) {
     //create(req, res);
-    createOne(req, res);
+    createOneBill(req, res);
     res.render('index', { title: 'createOne' });
 });
 
 router.get('/api/bill/list', function (req, res) {
-    list(undefined,req, res);
+    listBill(undefined, req, res);
 });
 
 
 router.get('/api/bill/find', async function (req, res) {
     req.body.Status = 'P';
-    await find(req, res);
+    await findBill(req, res);
 });
 
-/* router.get('/api/bill/findOrCreate', function (req, res) {
-    const workbook_response = readExcel();
-    workbook_response.forEach((element) => {
-        if (typeof element.RecLoc !== "undefined")
-            create(element)
-                .then((resp) => console.log({ resp }))
-                .catch((error) => console.log({ error }))
-               // .finally(() => res.send('Fin del proceso'));
-    });
-    res.send('Fin del proceso');
-   
-}); */
+
 
 router.get('/api/bill/BulkCreate', function (req, res) {
-    BulkCreate(req, res);
+    BulkCreateBill(req, res);
 });
 
 //alternativo
@@ -48,7 +37,7 @@ router.get('/api/bill/findOrCreate', async function (req, res) {
 
         for (const element of workbook_response) {
             if (typeof element.RecLoc !== "undefined") {
-                await create(element);
+                await createBill(element);
             }
         }
 
@@ -61,9 +50,18 @@ router.get('/api/bill/findOrCreate', async function (req, res) {
 
 
 router.get('/api/bill/submitbill', async function (req, res) {
-    req.body.Status = 'P';
-    req.body.CompanyId = 1;
-    await submitBill(req, res);
+    req.body.nit = '06140307821050';
+    await findCustomer(req)
+        .then(customer => {
+            if (customer) {
+                req.body.customerguid = customer.customerguid;
+                submitBill(req, res);
+            } else {
+                res.status(200).send('No se encontro el customer');
+            }
+        })
+        .catch(error => res.status(400).send(error));
+
 });
 
 
