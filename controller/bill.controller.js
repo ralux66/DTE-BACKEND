@@ -6,16 +6,6 @@ const { httpClient } = require('../utility')
 const { crearBillDte } = require('../Entitys');
 
 module.exports = {
-    /**
-     * Create a new juego
-     * 
-     * Methoud: POST
-     * Headers: -
-     * Body: -
-     * 
-     * @param {*} req 
-     * @param {*} res 
-     */
     findOrCreateBill(req, res) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'Create a new game'
@@ -148,55 +138,37 @@ module.exports = {
     },
 
     createOneBill(req, res) {
-        // #swagger.tags = ['Games'];
-        // #swagger.description = 'Create a new game'
         let workbook_response = utility.readExcelProcess();
         workbook_response.forEach(element => {
-            //console.log(element);
             if (typeof element.RecLoc !== "undefined") {
-                return bill.create(
-                    /* .findOrCreate({
-                        where: {
-                            RecLoc: element.RecLoc ?? "",
-                        }, */
-                    {
-                        CompanyId: 1,
-                        RecLoc: element.RecLoc,
-                        SegSeqNbr: element.SegSeqNbr,
-                        RecLoc: element.RecLoc,
-                        SegSeqNbr: element.SegSeqNbr,
-                        NbrOfPax: element.NbrOfPax,
-                        ArcIata: element.ArcIata,
-                        FirstName: element.FirstName,
-                        LastName: element.LastName,
-                        Email: 'ralux.zepeda@gmail.com',
-                        BookingDate: element.BookingDate,
-                        FlightDate: element.FlightDate,
-                        SegmentOrigin: element.SegmentOrigin,
-                        SegmentDest: element.SegmentDest,
-                        Base: element.Base.toFixed(2),
-                        CurrencyBase: element.CurrencyBase,
-                        SV: element.SV.toFixed(2),
-                        Status: 'P'
-                    }
-                ).then(bill => res.status(200).send(bill.ID));
-                //.catch(error => res.status(400).send(error))
+                return bill.create({
+                    customerguid: 1,
+                    RecLoc: element.RecLoc,
+                    SegSeqNbr: element.SegSeqNbr,
+                    RecLoc: element.RecLoc,
+                    SegSeqNbr: element.SegSeqNbr,
+                    NbrOfPax: element.NbrOfPax,
+                    ArcIata: element.ArcIata,
+                    FirstName: element.FirstName,
+                    LastName: element.LastName,
+                    Email: 'ralux.zepeda@gmail.com',
+                    BookingDate: element.BookingDate,
+                    FlightDate: element.FlightDate,
+                    SegmentOrigin: element.SegmentOrigin,
+                    SegmentDest: element.SegmentDest,
+                    Base: element.Base.toFixed(2),
+                    CurrencyBase: element.CurrencyBase,
+                    SV: element.SV.toFixed(2),
+                    Status: 'P'
+                }
+                )
+                    .then(bill => res.status(200).send(bill.ID))
+                    .catch(error => res.status(400).send(error));
             }
         });
         //return 'Ok';
     },
-    /**
-     * Find all games
-     * 
-     * Example: SELECT * FROM usuarios
-     * 
-     * Methoud: GET
-     * Headers: -
-     * Body: -
-     * 
-     * @param {*} _ 
-     * @param {*} res 
-     */
+
     listBill(_, req, res) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'List all the games'
@@ -206,18 +178,6 @@ module.exports = {
             .catch(error => res.status(400).send(error))
     },
 
-    /**
-     * Find one user in the table games
-     * 
-     * Example: SELECT * FROM juegos WHERE name = 'Pac Man'
-     * 
-     * Methoud: GET
-     * Headers: -
-     * Body: -
-     * 
-     * @param {*} req 
-     * @param {*} res 
-     */
     async findBill(req, res) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'Find a game'
@@ -231,38 +191,62 @@ module.exports = {
             .catch(error => res.status(400).send(error))
     },
 
-    async submitBill(req, res) {
-        customers.findOne({
-            where: {                 
-                customerguid: req.body.customerguid
-            }
-        })
-            .then(customers =>
-                bill
-                    .findOne({
-                        where: {
-                            Status: 'P',
-                            customerguid: customers.customerguid
-                        }
-                    })
-                    .then(bill =>{
-                        console.log('Objeto: >>>>>' + crearBillDte(customers, bill))
-                    })
-                    .catch(error => res.status(400).send(error))
-            )
-            .catch(error => res.status(400).send(error));
+    async submitBill(req, res, customer) {
+        return await bill
+            .findOne({
+                where: {
+                    Status: 'P',
+                    customerguid: customer.customerguid
+                }
+            })
+            .then(bill => {
+                const dteSend = crearBillDte(customer, bill);
+                console.table({ dteSend });
+                //httpClient.post('https://apitest.dtes.mh.gob.sv/seguridad/auth', req);
+                const headerDTE = {
+                    "Authorization": "",
+                    "User-Agent": "Chrome/12.0.706.0 (Windows NT 6.0; AppleWebKit/534.25)",
+                    "content-Type": "application/JSON"
+                };
+
+                const bodyDTE = {
+                    ambiente: "00",
+                    idEnvio: 1,
+                    version: 1,
+                    tipoDte: "01",
+                    documento: dteSend,
+                    codigoGeneracion: "13BF1073-8D3F-4FA1-9238-154E0E6029C8"
+                }
+                /*
+                Header-->
+                Authorization
+                User-Agent
+                content-Type - application/JSON
+
+                Body-->
+                ambiente 00 Prueba 01 Prod
+                idEnvio
+                version
+                tipoDte
+                documento JSON DTE
+                codigoGeneracion
+                */
+                httpClient.post('https://apitest.dtes.mh.gob.sv/fesv/recepciondte', bodyDTE, headerDTE).then((res) => {
+                    console.table({ res });
+                });
+            })
+        //.catch(error => res.status(400).send(error));
+
     },
 
     async createBill(element) {
-        // #swagger.tags = ['Games'];
-        // #swagger.description = 'Create a new game'
         const response = await bill
             .findOrCreate({
                 where: {
                     RecLoc: element.RecLoc ?? "",
                 },
                 defaults: {
-                    CompanyId: 1,
+                    customerguid: element.customerguid,
                     RecLoc: element.RecLoc,
                     SegSeqNbr: element.SegSeqNbr,
                     RecLoc: element.RecLoc,

@@ -2,7 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const { readExcel } = require("../utility");
-const { submitBill, listBill, findBill, createOneBille, BulkCreateBille, createBill, findBill, createOneBill, BulkCreateBill } = require('../controller');
+const { submitBill, listBill, findBill, createOneBille, BulkCreateBille, createBill,
+    createOneBill, BulkCreateBill, findCustomer } = require('../controller');
 
 router.get('/api', (req, res) => res.status(200).send({
     message: '¡Esta es una buena señal! Nuestro Node.js está funcionando correctamente ;)',
@@ -33,13 +34,20 @@ router.get('/api/bill/BulkCreate', function (req, res) {
 //alternativo
 router.get('/api/bill/findOrCreate', async function (req, res) {
     try {
-        const workbook_response = await readExcel();
-
-        for (const element of workbook_response) {
-            if (typeof element.RecLoc !== "undefined") {
-                await createBill(element);
+        req.body.nit = '94501110101012';
+        await findCustomer(req).then((customer) => {
+            //console.log("customer: " + customer.customerguid);
+            if (customer) {
+                const workbook_response = readExcel();
+                for (const element of workbook_response) {
+                    if (typeof element.RecLoc !== "undefined") {
+                        //element.customerguid = '123e4567-e89b-12d3-a456-426655440000';
+                        element.customerguid = customer.customerguid;
+                        createBill(element);
+                    }
+                }
             }
-        }
+        });
 
         res.send('Fin del proceso');
     } catch (error) {
@@ -50,12 +58,15 @@ router.get('/api/bill/findOrCreate', async function (req, res) {
 
 
 router.get('/api/bill/submitbill', async function (req, res) {
-    req.body.nit = '06140307821050';
+    req.body.companynit = '94501110101012';
+    req.body.user = 'AplicationTester';
+    req.body.password = '123';
     await findCustomer(req)
-        .then(customer => {
+        .then((customer) => {
             if (customer) {
-                req.body.customerguid = customer.customerguid;
-                submitBill(req, res);
+                submitBill(req, res, customer)
+                    .then((resp) => { res.status(200).send({ resp }) })
+                    .catch(error => res.status(400).send({ error }));
             } else {
                 res.status(200).send('No se encontro el customer');
             }

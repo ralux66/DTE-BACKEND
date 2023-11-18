@@ -55,7 +55,7 @@ module.exports = {
         return await customer
             .findOne({
                 where: {
-                    nit: req.body.nit,
+                    nit: req.body.companynit,
                 }
             });
           
