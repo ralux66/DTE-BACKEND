@@ -1,6 +1,7 @@
+const { numeroALetrasConDecimales } = require('../utility');
 module.exports = {
-  crearBillDte(customer, elementBill) {
-
+  ObjectBillDte(customer, elementBill) {
+  
     const dte = {};
 
     // Identificacion
@@ -39,17 +40,35 @@ module.exports = {
 
     // Receptor
     dte.receptor = {
-      tipoDocumento: elementBill.tipoDocumento,
-      numDocumento: elementBill.numDocumento,
-      nrc: elementBill.nrc,
-      nombre: elementBill.nombre,
-      codActividad: elementBill.codActividad,
-      descActividad: elementBill.descActividad,
-      telefono: elementBill.telefono,
-      correo: elementBill.correo,
-      direccion: elementBill.direccion,
+      tipoDocumento: 13,
+      numDocumento: null,
+      nrc: null,
+      nombre: elementBill.FirstName + " " + elementBill.LastName,
+      codActividad: null,
+      descActividad: null,
+      telefono: null,
+      correo: null,
+      direccion: null,
     };
 
+    /*
+     customerguid: DataTypes.STRING,
+    RecLoc: DataTypes.STRING,
+    SegSeqNbr: DataTypes.INTEGER,
+    NbrOfPax: DataTypes.INTEGER,
+    ArcIata: DataTypes.STRING,
+    FirstName: DataTypes.STRING,
+    LastName: DataTypes.STRING,
+    Email: DataTypes.STRING,
+    BookingDate: DataTypes.DATE,
+    FlightDate: DataTypes.DATE,
+    SegmentOrigin: DataTypes.STRING,
+    SegmentDest: DataTypes.STRING,
+    Base: DataTypes.DOUBLE,
+    CurrencyBase: DataTypes.STRING,
+    SV: DataTypes.DOUBLE,
+    Status: DataTypes.CHAR
+    */
     // Otros documentos
     dte.otrosDocumentos = null;
 
@@ -59,50 +78,56 @@ module.exports = {
     // Cuerpo documento
     dte.cuerpoDocumento =
       [{
-        numItem: elementBill.numelementBill,
-        numeroDocumento: elementBill.numeroDocumento,
-        tipoItem: elementBill.tipoItem,
-        codigo: elementBill.codigo,
-        codTributo: elementBill.codTributo,
-        descripcion: elementBill.descripcion,
-        cantidad: elementBill.cantidad,
-        uniMedida: elementBill.uniMedida,
-        precioUni: elementBill.precioUni,
-        montoDescu: elementBill.montoDescu,
-        ventaGravada: elementBill.ventaGravada,
-        ventaNoSuj: elementBill.ventaNoSuj,
-        ventaExenta: elementBill.ventaExenta,
-        tributos: elementBill.tributos,
-        psv: elementBill.psv,
-        noGravado: elementBill.noGravado,
-        ivaItem: elementBill.ivaItem,
+        numItem: 1,
+        numeroDocumento: elementBill.RecLoc,
+        tipoItem: 1,
+        codigo: elementBill.RecLoc,
+        codTributo: null,
+        descripcion: elementBill.RecLoc,
+        cantidad: 1,
+        uniMedida: 59,
+        precioUni: elementBill.Base,
+        montoDescu: 0,
+        ventaGravada: elementBill.Base,
+        ventaNoSuj: 0,
+        ventaExenta: 0,
+        tributos: null,
+        psv: 0,
+        noGravado: 0,
+        ivaItem: elementBill.SV,
       }];
 
 
     // Resumen
     dte.resumen = {
-      totalNoSuj: elementBill.totalNoSuj,
-      totalExenta: elementBill.totalExenta,
-      totalGravada: elementBill.totalGravada,
-      subTotalVentas: elementBill.subTotalVentas,
-      descuNoSuj: elementBill.descuNoSuj,
-      descuExenta: elementBill.descuExenta,
-      descuGravada: elementBill.descuGravada,
-      porcentajeDescuento: elementBill.porcentajeDescuento,
-      totalDescu: elementBill.totalDescu,
-      tributos: elementBill.tributos,
-      subTotal: elementBill.subTotal,
-      ivaRete1: elementBill.ivaRete1,
-      reteRenta: elementBill.reteRenta,
-      montoTotalOperacion: elementBill.montoTotalOperacion,
-      totalNoGravado: elementBill.totalNoGravado,
-      totalPagar: elementBill.totalPagar,
-      totalLetras: elementBill.totalLetras,
-      saldoFavor: elementBill.saldoFavor,
-      totalIva: elementBill.totalIva,
-      condicionOperacion: elementBill.condicionOperacion,
-      pagos: elementBill.pagos,
-      numPagoElectronico: elementBill.numPagoElectronico,
+      totalNoSuj: 0,
+      totalExenta: 0,
+      totalGravada: elementBill.Base,
+      subTotalVentas: elementBill.Base,
+      descuNoSuj: 0,
+      descuExenta: 0,
+      descuGravada: 0,
+      porcentajeDescuento: 0,
+      totalDescu: 0,
+      tributos: [],
+      subTotal: elementBill.Base,
+      ivaRete1: elementBill.SV,
+      reteRenta: 0,
+      montoTotalOperacion: elementBill.Base,
+      totalNoGravado: 0,
+      totalPagar: elementBill.Base,
+      totalLetras: numeroALetrasConDecimales(elementBill.Base *-1), //funcion convierte a letras
+      saldoFavor: 0,
+      totalIva: elementBill.SV,
+      condicionOperacion: 1,
+      pagos: [{
+        codigo: '03',
+        montoPago: elementBill.Base,
+        referencia: null,
+        periodo: null,
+        plazo: null
+      }],
+      numPagoElectronico: null,
     };
 
     // extension

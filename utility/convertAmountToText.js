@@ -1,11 +1,15 @@
-module.exports = function numeroALetrasConDecimales(numero) {
+ 
+
+
+const numeroALetrasConDecimales = (numero) =>
+ {
     // Validamos que el número sea un número entero
-    if (!Number.isInteger(numero)) {
+    /* if (!Number.isInteger(numero)) {
         throw new Error("El número debe ser un número entero");
-    }
+    } */
 
     // Convertimos el número a una cadena de texto
-    numero = numero.toString();
+    numero = typeof numero == 'string' ? numero : numero.toString();
 
     // Dividimos el número en dos partes: la parte entera y la parte decimal
     const [parteEntera, parteDecimal] = numero.split(".");
@@ -46,12 +50,12 @@ function numeroALetrasDecimal(parteDecimal) {
 
 function numeroALetras(numero) {
     // Validamos que el número sea un número entero
-    if (!Number.isInteger(numero)) {
+    /* if (!Number.isInteger(numero)) {
         throw new Error("El número debe ser un número entero");
-    }
+    } */
 
     // Convertimos el número a una cadena de texto
-    numero = numero.toString();
+    numero = typeof numero == 'string' ? numero : numero.toString();
 
     // Creamos una matriz con las palabras para los números del 0 al 9
     const palabras = ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
@@ -93,3 +97,8 @@ function numeroALetras(numero) {
 
     return texto;
 }
+
+
+module.exports ={
+    numeroALetrasConDecimales,
+  }

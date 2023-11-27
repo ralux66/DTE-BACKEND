@@ -1,5 +1,5 @@
-const {crearBillDte} =require('../Entitys/bill.entity')
+const {ObjectBillDte} =require('../Entitys/bill.entity')
 
 module.exports={
-    crearBillDte,
+    ObjectBillDte,
 }

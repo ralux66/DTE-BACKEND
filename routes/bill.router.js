@@ -59,8 +59,8 @@ router.get('/api/bill/findOrCreate', async function (req, res) {
 
 router.get('/api/bill/submitbill', async function (req, res) {
     req.body.companynit = '94501110101012';
-    req.body.user = 'AplicationTester';
-    req.body.password = '123';
+    req.body.user = '94501110101012';
+    req.body.password = 'SpiritAirline@2023';
     await findCustomer(req)
         .then((customer) => {
             if (customer) {

@@ -1,9 +1,9 @@
-//const utility = require("../utility/readExcel")
+const { v4: uuidv4 } = require('uuid');
 
 const bill = require('../models').bills;
-const customers = require('../models').customers;
+//const customers = require('../models').customers;
 const { httpClient } = require('../utility')
-const { crearBillDte } = require('../Entitys');
+const { ObjectBillDte } = require('../Entitys');
 
 module.exports = {
     findOrCreateBill(req, res) {
@@ -193,47 +193,79 @@ module.exports = {
 
     async submitBill(req, res, customer) {
         return await bill
-            .findOne({
+            .findAll({
                 where: {
                     Status: 'P',
-                    customerguid: customer.customerguid
+                    customerguid: customer.customerguid,
+
                 }
             })
             .then(bill => {
-                const dteSend = crearBillDte(customer, bill);
-                console.table({ dteSend });
-                //httpClient.post('https://apitest.dtes.mh.gob.sv/seguridad/auth', req);
-                const headerDTE = {
-                    "Authorization": "",
-                    "User-Agent": "Chrome/12.0.706.0 (Windows NT 6.0; AppleWebKit/534.25)",
-                    "content-Type": "application/JSON"
-                };
+                const dteSend = [];
 
-                const bodyDTE = {
-                    ambiente: "00",
-                    idEnvio: 1,
-                    version: 1,
-                    tipoDte: "01",
-                    documento: dteSend,
-                    codigoGeneracion: "13BF1073-8D3F-4FA1-9238-154E0E6029C8"
+                for (let index = 0; index < bill.length; index++) {
+                    const element = bill[index];
+                    dteSend.push(ObjectBillDte(customer, element));
+                    //console.log(element);
                 }
-                /*
-                Header-->
-                Authorization
-                User-Agent
-                content-Type - application/JSON
 
-                Body-->
-                ambiente 00 Prueba 01 Prod
-                idEnvio
-                version
-                tipoDte
-                documento JSON DTE
-                codigoGeneracion
-                */
-                httpClient.post('https://apitest.dtes.mh.gob.sv/fesv/recepciondte', bodyDTE, headerDTE).then((res) => {
-                    console.table({ res });
-                });
+                console.log(JSON.stringify(dteSend));
+
+                httpClient.post('https://apitest.dtes.mh.gob.sv/seguridad/auth',
+                    {
+                        params: {
+                            user: req.body.user,
+                            pwd: req.body.password
+                        }
+                    },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
+                        }
+                    }).then((result) => {
+                        const headerDTE = {
+                            Authorization: result.body.token,
+                            'Content-Type': 'application/json',
+                            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
+                        };
+
+                        const bodyDTE = {
+                            ambiente: '00',
+                            idEnvio: uuidv4(),
+                            version: 1,
+                            tipoDte: '01',
+                            nitEmisor: customer.nit,
+                            documento: JSON.stringify(dteSend),
+                            codigoGeneracion: uuidv4()
+                        }
+                        /*
+                        Header-->
+                        Authorization
+                        User-Agent
+                        content-Type - application/JSON
+        
+                        Body-->
+                        ambiente 00 Prueba 01 Prod
+                        idEnvio
+                        version
+                        tipoDte
+                        documento JSON DTE
+                        codigoGeneracion
+                        */
+                        //https://apitest.dtes.mh.gob.sv/fesv/recepcionlote/
+                        //httpClient.post('https://apitest.dtes.mh.gob.sv/fesv/recepciondte', { params: bodyDTE },
+                        httpClient.post('https://apitest.dtes.mh.gob.sv/fesv/recepcionlote/', { params: bodyDTE },
+                            {
+                                headers: {
+                                    headerDTE
+                                    //Authorization: result.body.token,
+                                }
+                            }).then((res) => {
+                                console.table({ res });
+                            }).catch(error => { console.log({ error }) });
+                    }).catch(error => console.log({ error }));
+
             })
         //.catch(error => res.status(400).send(error));
 

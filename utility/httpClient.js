@@ -11,7 +11,8 @@ const httpClientPlugin = {
   },
 
   post: async (url, body, headerparam) => {
-    const { data } = await axios.post(url, { headers: { headerparam } }, body);
+    const { data } = await axios.post(url, { headers: headerparam }, body);
+    return data;
   },
 
   put: async (url, body) => { },
