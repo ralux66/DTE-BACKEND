@@ -247,6 +247,7 @@ module.exports = {
                             pwd: req.body.password
                         }
                     };
+
                     httpClient.postplus(
                         postAUTH_DTE
                     ).then((authdte) => {
@@ -280,18 +281,39 @@ module.exports = {
 
                         /*  httpClient.postplus(
                              postDTE
-                         ) */
+                         ) */ //nitEmisor: customer.nit,
+                         axios({
+                            method: 'post',
+                            url: config.RECEPCION_DTE,
+                            headers: { Authorization: authdte.body.token, 'Content-Type': 'application/json' },
+                            data: {
+                                ambiente: '00',
+                                idEnvio: Math.floor(Math.random() * 10),
+                                version: 1,
+                                tipoDte: '01',
+                                documento: FirmaAut.body,
+                                codigoGeneracion: uuid()
+                            }
+                        }).then(resp => {
 
-                        httpClient.postplus(
-                            JSON.stringify(postDTE)
-                        ).then((lotedte) => {
-                            console.log({ lotedte });
-                        }).catch(error => { console.log({ error }) });
+                            /* resp.data.observaciones.forEach(obs => {
+
+                                console.log(obs);
+                            }) */
+                            resp.forEach(item => {
+                                console.log(item)
+                            })        
+
+                        }).catch((error) => {
+                            error.response.data.observaciones.forEach(item => {
+                                console.log(item)
+                            }); 
+                        })
 
 
-                    }).catch(error => console.log({ error }));
-                });
-            }).catch(error => res.status(400).send({ error }));
+                    }).catch(error => res.status(400).send({ error }))
+                })
+            })
     },
 
     async createBill(element) {
