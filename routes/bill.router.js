@@ -61,6 +61,7 @@ router.get('/api/bill/submitbill', async function (req, res) {
     req.body.companynit = '94501110101012';
     req.body.user = '94501110101012';
     req.body.password = 'SpiritAirline@2023';
+    req.body.passwordPri = 'impuestos2016';
     await findCustomer(req)
         .then((customer) => {
             if (customer) {

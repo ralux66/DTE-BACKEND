@@ -1,9 +1,11 @@
-const { v4: uuidv4 } = require('uuid');
-
+//const { v4: uuidv4 } = require('uuid');
 const bill = require('../models').bills;
-//const customers = require('../models').customers;
-const { httpClient } = require('../utility')
+const config = require('../config/config');
+const { httpClient, uuid } = require('../utility')
 const { ObjectBillDte } = require('../Entitys');
+const axios = require('axios');
+const { json } = require('body-parser');
+const { stringify } = require('uuid');
 
 module.exports = {
     findOrCreateBill(req, res) {
@@ -193,7 +195,7 @@ module.exports = {
 
     async submitBill(req, res, customer) {
         return await bill
-            .findAll({
+            .findOne({
                 where: {
                     Status: 'P',
                     customerguid: customer.customerguid,
@@ -201,74 +203,95 @@ module.exports = {
                 }
             })
             .then(bill => {
-                const dteSend = [];
+                //const dteSend = [];
 
-                for (let index = 0; index < bill.length; index++) {
+                /* for (let index = 0; index < bill.length; index++) {
                     const element = bill[index];
                     dteSend.push(ObjectBillDte(customer, element));
                     //console.log(element);
-                }
+                } */
+                const dteSend = ObjectBillDte(customer, bill);
 
-                console.log(JSON.stringify(dteSend));
+                //console.log(JSON.stringify(dteSend));
+                /*  axios({
+                     method: 'post',
+                     url: config.FIRMADOR_LOCAL,
+                     headers: { 'Content-Type': 'application/json' },
+                     data: {
+                         nit: customer.nit,
+                         passwordPri: req.body.passwordPri,
+                         dteJson: dteSend// This is the body part
+                     }
+                 }).then(resp => { console.log(resp) }).catch(error=>{console.log(error)}); */
 
-                httpClient.post('https://apitest.dtes.mh.gob.sv/seguridad/auth',
-                    {
-                        params: {
+                const postFIRMADTE = {
+                    method: 'post',
+                    url: config.FIRMADOR_LOCAL,
+                    headers: { 'Content-Type': 'application/json' },
+                    data: {
+                        nit: customer.nit,
+                        passwordPri: req.body.passwordPri,
+                        dteJson: dteSend
+                    }
+                };
+
+                httpClient.postplus(
+                    postFIRMADTE
+                ).then((FirmaAut) => {
+                    const postAUTH_DTE = {
+                        method: 'post',
+                        url: config.AUTH_DTE,
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        data: {
                             user: req.body.user,
                             pwd: req.body.password
                         }
-                    },
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
-                        }
-                    }).then((result) => {
-                        const headerDTE = {
-                            Authorization: result.body.token,
-                            'Content-Type': 'application/json',
-                            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
+                    };
+                    httpClient.postplus(
+                        postAUTH_DTE
+                    ).then((authdte) => {
+                        /*  const bodyDTE = {
+                             ambiente: '00',
+                             idEnvio: uuid(),
+                             version: 1,
+                             tipoDte: '01',
+                             nitEmisor: customer.nit,
+                             documento: FirmaAut.body, //DTE FIRMADO DGI
+                             codigoGeneracion: uuid()
+                         }; */
+
+                        const postDTE = {
+                            method: 'post',
+                            url: config.RECEPCION_DTE,
+                            headers: { Authorization: authdte.body.token, 'Content-Type': 'application/json' },
+                            data: {
+                                ambiente: '00',
+                                idEnvio: Math.floor(Math.random() * 10),
+                                version: 1,
+                                tipoDte: '01',
+                                //nitEmisor: customer.nit,
+                                documento: FirmaAut.body, //DTE FIRMADO DGI
+                                codigoGeneracion: uuid()
+                            }
                         };
 
-                        const bodyDTE = {
-                            ambiente: '00',
-                            idEnvio: uuidv4(),
-                            version: 1,
-                            tipoDte: '01',
-                            nitEmisor: customer.nit,
-                            documento: JSON.stringify(dteSend),
-                            codigoGeneracion: uuidv4()
-                        }
-                        /*
-                        Header-->
-                        Authorization
-                        User-Agent
-                        content-Type - application/JSON
-        
-                        Body-->
-                        ambiente 00 Prueba 01 Prod
-                        idEnvio
-                        version
-                        tipoDte
-                        documento JSON DTE
-                        codigoGeneracion
-                        */
-                        //https://apitest.dtes.mh.gob.sv/fesv/recepcionlote/
-                        //httpClient.post('https://apitest.dtes.mh.gob.sv/fesv/recepciondte', { params: bodyDTE },
-                        httpClient.post('https://apitest.dtes.mh.gob.sv/fesv/recepcionlote/', { params: bodyDTE },
-                            {
-                                headers: {
-                                    headerDTE
-                                    //Authorization: result.body.token,
-                                }
-                            }).then((res) => {
-                                console.table({ res });
-                            }).catch(error => { console.log({ error }) });
+
+                        //console.log(JSON.stringify(postDTE));
+
+                        /*  httpClient.postplus(
+                             postDTE
+                         ) */
+
+                        httpClient.postplus(
+                            JSON.stringify(postDTE)
+                        ).then((lotedte) => {
+                            console.log({ lotedte });
+                        }).catch(error => { console.log({ error }) });
+
+
                     }).catch(error => console.log({ error }));
-
-            })
-        //.catch(error => res.status(400).send(error));
-
+                });
+            }).catch(error => res.status(400).send({ error }));
     },
 
     async createBill(element) {

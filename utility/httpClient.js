@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { stringify } = require('uuid');
 
 
 const httpClientPlugin = {
@@ -10,10 +11,21 @@ const httpClientPlugin = {
     // return await resp.json();     
   },
 
-  post: async (url, body, headerparam) => {
-    const { data } = await axios.post(url, { headers: headerparam }, body);
+  post: async (url, headerparam, body) => {
+    const { data } = await axios.post(url,  headerparam , body);
     return data;
   },
+
+  //postplus: async (methodparam, urlparams, headerparam, bodyData) => {
+  postplus: async (requestPost) => {
+    const { data } = await axios(requestPost);
+    return data;
+  },
+
+
+
+
+
 
   put: async (url, body) => { },
   delete: async (url) => { },

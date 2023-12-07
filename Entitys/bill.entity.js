@@ -1,7 +1,7 @@
-const { numeroALetrasConDecimales } = require('../utility');
+const { numeroALetrasConDecimales, uuid, dateFormat } = require('../utility');
 module.exports = {
   ObjectBillDte(customer, elementBill) {
-  
+    const date = new Date();
     const dte = {};
 
     // Identificacion
@@ -9,16 +9,18 @@ module.exports = {
       version: 1,
       ambiente: '00',
       tipoDte: '01',
-      numeroControl: 1,
-      codigoGeneracion: '13BF1073-8D3F-4FA1-9238-154E0E6029C8',
+      numeroControl: 'DTE-' + elementBill.RecLoc + uuid(),
+      codigoGeneracion: 'DTE-' +uuid(),
       tipoModelo: 1,
       tipoOperacion: 1,
-      fecEmi: Date.now(),
-      horEmi: Date.now(),
+      fecEmi: dateFormat(date),
+      horEmi: date.toLocaleTimeString(),
       tipoMoneda: 'USD',
       tipoContingencia: null,
       motivoContin: null,
     };
+
+    dte.documentoRelacionado = null;
 
     // Emisor
     dte.emisor = {
@@ -29,7 +31,11 @@ module.exports = {
       descActividad: customer.descActividad,
       nombreComercial: customer.nombreComercial,
       tipoEstablecimiento: customer.tipoEstablecimiento,
-      direccion: customer.direccion,
+      direccion: {
+        'departamento': '06',
+        'municipio': '14',
+        'complemento': 'Calle El Mirador Entre 87 y 89 Av. Nte. Col. Escalón Edif. Quatro, Niveles 11 y 12 San Salvador'
+      },
       telefono: customer.telefono,
       correo: customer.correo,
       codEstableMH: customer.codEstableMH,
@@ -40,7 +46,7 @@ module.exports = {
 
     // Receptor
     dte.receptor = {
-      tipoDocumento: 13,
+      tipoDocumento: '01',
       numDocumento: null,
       nrc: null,
       nombre: elementBill.FirstName + " " + elementBill.LastName,
@@ -116,7 +122,7 @@ module.exports = {
       montoTotalOperacion: elementBill.Base,
       totalNoGravado: 0,
       totalPagar: elementBill.Base,
-      totalLetras: numeroALetrasConDecimales(elementBill.Base *-1), //funcion convierte a letras
+      totalLetras: numeroALetrasConDecimales(elementBill.Base), //funcion convierte a letras
       saldoFavor: 0,
       totalIva: elementBill.SV,
       condicionOperacion: 1,
@@ -139,6 +145,10 @@ module.exports = {
       observaciones: null,
       placaVehiculo: null,
     };
+
+    dte.apendice = null;
+    dte.ventaTercero = null;
+    dte.otrosDocumentos = null;
 
     return dte;
   },

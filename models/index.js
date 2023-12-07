@@ -5,15 +5,27 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const process = require('process');
 const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+const config = require('../config/config');
+const env = config.NODE_ENV.trim() || 'development';
+let configDB = {};
+//SWITCH BASE DE DATOS PRODUCCION - DEV
+switch (env) {
+  case 'development':
+    configDB = config.configuraionDB.development;
+  case 'production':
+    configDB = config.configuraionDB.production;
+    break;
+  default:
+    break;
+}
+//const config = require('../config/config.json')[env];
 const db = {};
 
 let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+if (configDB.use_env_variable) {
+  sequelize = new Sequelize(process.env[configDB.use_env_variable], configDB);
 } else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
+  sequelize = new Sequelize(configDB.database, configDB.username, configDB.password, configDB);
 }
 
 fs
