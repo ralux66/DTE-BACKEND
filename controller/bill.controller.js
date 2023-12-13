@@ -282,7 +282,7 @@ module.exports = {
                         /*  httpClient.postplus(
                              postDTE
                          ) */ //nitEmisor: customer.nit,
-                         axios({
+                        axios({
                             method: 'post',
                             url: config.RECEPCION_DTE,
                             headers: { Authorization: authdte.body.token, 'Content-Type': 'application/json' },
@@ -295,19 +295,14 @@ module.exports = {
                                 codigoGeneracion: uuid()
                             }
                         }).then(resp => {
-
-                            /* resp.data.observaciones.forEach(obs => {
-
-                                console.log(obs);
-                            }) */
-                            resp.forEach(item => {
+                            resp.response.data.observaciones.forEach(item => {
                                 console.log(item)
-                            })        
-
+                            });
                         }).catch((error) => {
                             error.response.data.observaciones.forEach(item => {
                                 console.log(item)
-                            }); 
+                            });
+                            console.log(error.response.data.descripcionMsg);
                         })
 
 

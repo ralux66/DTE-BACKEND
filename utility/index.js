@@ -4,7 +4,7 @@ const { numeroALetrasConDecimales } = require('./convertAmountToText');
 const { httpClient } = require('./httpClient');
 const { dateFormat } = require('./formatDate');
 const { v4: uuid } = require('uuid');
-
+const { numeroControl, codigoGeneracion } = require('./generateCodeWithPattern');
 
 module.exports = {
     readExcel,
@@ -12,5 +12,7 @@ module.exports = {
     numeroALetrasConDecimales,
     httpClient,
     dateFormat,
-    uuid
+    uuid,
+    numeroControl,
+    codigoGeneracion
 }

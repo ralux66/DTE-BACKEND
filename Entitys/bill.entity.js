@@ -1,16 +1,19 @@
-const { numeroALetrasConDecimales, uuid, dateFormat } = require('../utility');
+const { numeroALetrasConDecimales,  dateFormat,
+  numeroControl, codigoGeneracion, uuid} = require('../utility');
+ 
 module.exports = {
   ObjectBillDte(customer, elementBill) {
     const date = new Date();
     const dte = {};
+   // const codGenerate = generateRandomCodeWithPattern('^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$');
 
     // Identificacion
     dte.identificacion = {
       version: 1,
       ambiente: '00',
       tipoDte: '01',
-      numeroControl: 'DTE-' + elementBill.RecLoc + uuid(),
-      codigoGeneracion: 'DTE-' +uuid(),
+      numeroControl: 'DTE-01-EV080383-000000000000001', //numeroControl(),
+      codigoGeneracion: '13BF1073-8D3F-4FA1-9238-154E0E6029C8', //codigoGeneracion() ,
       tipoModelo: 1,
       tipoOperacion: 1,
       fecEmi: dateFormat(date),
@@ -46,8 +49,8 @@ module.exports = {
 
     // Receptor
     dte.receptor = {
-      tipoDocumento: '01',
-      numDocumento: null,
+      tipoDocumento: '36',
+      numDocumento: '014783212',
       nrc: null,
       nombre: elementBill.FirstName + " " + elementBill.LastName,
       codActividad: null,
@@ -85,7 +88,7 @@ module.exports = {
     dte.cuerpoDocumento =
       [{
         numItem: 1,
-        numeroDocumento: elementBill.RecLoc,
+        numeroDocumento:  'DTE-01-EV080383-000000000000001',//numeroControl(), //'DTE'+generateRandomCodeWithPattern('^-01-[A-Z0-9]{8}-[0-9]{15}$'),
         tipoItem: 1,
         codigo: elementBill.RecLoc,
         codTributo: null,
