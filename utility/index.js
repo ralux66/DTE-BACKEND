@@ -4,7 +4,7 @@ const { numeroALetrasConDecimales } = require('./convertAmountToText');
 const { httpClient } = require('./httpClient');
 const { dateFormat } = require('./formatDate');
 const { v4: uuid } = require('uuid');
-const { numeroControl, codigoGeneracion } = require('./generateCodeWithPattern');
+const { GenerateCorrelativoDTE,GenerateCodigo } = require('./generateCodeWithPattern');
 
 module.exports = {
     readExcel,
@@ -13,6 +13,6 @@ module.exports = {
     httpClient,
     dateFormat,
     uuid,
-    numeroControl,
-    codigoGeneracion
+    GenerateCorrelativoDTE,
+    GenerateCodigo
 }

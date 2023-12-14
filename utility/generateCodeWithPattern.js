@@ -1,96 +1,47 @@
-const generarCodigoControlnumeroControl = ()=> {
-    // Se verifica que el patrón sea válido.
+const GenerateCorrelativoDTE = (NRCemisor, ultimoBloque) => {
+    // Obtenemos la longitud del ultimo bloque
+    const longitud = String('000000000000000').length - String(ultimoBloque).length
 
-    /*   if (!patron.match(/^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/)) {
-        throw new Error("El patrón de caracteres no es válido.");
-      } */
 
-    // Se genera el código de control.
+    const patron = '00000000'
+    const rellenoNit = String(patron).length - String(NRCemisor).length;
 
-    let codigoControl = codigoGeneracion();
+    // Creamos un arreglo con ceros hasta la longitud del ultimo bloque
+    const relleno = Array(longitud).fill(0);
+    const rellenoNITemisor = Array(rellenoNit).fill(0);
 
-    // Si el código de control tiene más de 36 caracteres, se genera un nuevo código de control.
+    // Concatenamos el arreglo de ceros con el ultimo bloque
+    const codigoDTE = relleno.join("") + ultimoBloque;
+    const nrcEMISOR = rellenoNITemisor.join("") + NRCemisor;
+    // Devolvemos el codigo DTE
+    console.log('DTE-01-' + nrcEMISOR + '-' + codigoDTE);
+    return 'DTE-01-' + nrcEMISOR + '-' + codigoDTE;
+}
 
-    while (codigoControl.length > 31) {
-        codigoControl = codigoGeneracion();
+const GenerateCodigo = () => {
+
+    const caracteres = '0123456789ABCDEF';
+    let numeroGenerado = '';
+
+    for (let i = 0; i < 36; i++) {
+        // Insertar guiones en posiciones específicas
+        if (i === 8 || i === 13 || i === 18 || i === 23) {
+            numeroGenerado += '-';
+        } else {
+            // Generar un carácter aleatorio
+            numeroGenerado += caracteres[Math.floor(Math.random() * 16)];
+        }
     }
-
-    return codigoControl;
-}
-
-const generarCodigoControlcodigoGeneracion =()=> {
-    // Se verifica que el patrón sea válido.
-
-    /*   if (!patron.match(/^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/)) {
-        throw new Error("El patrón de caracteres no es válido.");
-      } */
-
-    // Se genera el código de control.
-
-    let codigoControl = codigoGeneracion();
-
-    // Si el código de control tiene más de 36 caracteres, se genera un nuevo código de control.
-
-    while (codigoControl.length > 31) {
-        codigoControl = codigoGeneracion();
-    }
-
-    return codigoControl;
+    console.log(numeroGenerado);
+    return numeroGenerado;
 }
 
 
 
-const numeroControl = () => {
-    // Se verifica que el patrón sea válido.
 
-    /* if (!patron.match(/^DTE-01-[A-Z0-9]{8}-[0-9]{15}$/)) {
-        throw new Error("El patrón de caracteres no es válido.");
-    } */
 
-    // Se generan los primeros 8 caracteres del código de control, que son alfanuméricos.
-
-    const caracteresAlfanumericos = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    const codigoAlfanumerico = caracteresAlfanumericos.substring(0, 8).split("").map(
-        (c) => Math.floor(Math.random() * caracteresAlfanumericos.length)
-    ).join("");
-
-    // Se generan los últimos 15 caracteres del código de control, que son numéricos.
-
-    const codigoNumerico = Math.floor(Math.random() * 999999999999);
-
-    // Se concatenan los dos grupos de caracteres para formar el código de control completo.
-
-    const codigoControl = `DTE-01-${codigoAlfanumerico}-${codigoNumerico}`;
-
-    return codigoControl;
-}
-
-const codigoGeneracion = () => {
-    // Se verifica que el patrón sea válido.
-    /* 
-      if (!patron.match(/^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/)) {
-        throw new Error("El patrón de caracteres no es válido.");
-      }
-     */
-    // Se generan los primeros 8 caracteres del código de control, que son alfanuméricos.
-
-    const caracteresHexadecimales = "0123456789ABCDEF";
-    const codigoHexadecimal = caracteresHexadecimales.substring(0, 8).split("").map(
-        (c) => Math.floor(Math.random() * caracteresHexadecimales.length)
-    ).join("");
-
-    // Se generan los últimos 12 caracteres del código de control, que son numéricos.
-
-    const codigoNumerico = Math.floor(Math.random() * 999999999999);
-
-    // Se concatenan los dos grupos de caracteres para formar el código de control completo.
-
-    const codigoControl = `${codigoHexadecimal}-${codigoNumerico}`;
-
-    return codigoControl;
-}
 
 module.exports = {
-    generarCodigoControlcodigoGeneracion,
-    codigoGeneracion
+    GenerateCorrelativoDTE,
+    GenerateCodigo
 }

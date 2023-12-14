@@ -1,19 +1,21 @@
-const { numeroALetrasConDecimales,  dateFormat,
-  numeroControl, codigoGeneracion, uuid} = require('../utility');
- 
+const { numeroALetrasConDecimales, dateFormat,
+  GenerateCorrelativoDTE, GenerateCodigo } = require('../utility');
+
 module.exports = {
   ObjectBillDte(customer, elementBill) {
     const date = new Date();
     const dte = {};
-   // const codGenerate = generateRandomCodeWithPattern('^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$');
-
+    // const codGenerate = generateRandomCodeWithPattern('^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$');
+    const numeroControlDTE = GenerateCorrelativoDTE(customer.nrc, 1);
+    const numeroCodigoGeneracion = GenerateCodigo();
+    
     // Identificacion
     dte.identificacion = {
       version: 1,
       ambiente: '00',
       tipoDte: '01',
-      numeroControl: 'DTE-01-EV080383-000000000000001', //numeroControl(),
-      codigoGeneracion: '13BF1073-8D3F-4FA1-9238-154E0E6029C8', //codigoGeneracion() ,
+      numeroControl: numeroControlDTE, //numeroControl(),
+      codigoGeneracion: numeroCodigoGeneracion, //codigoGeneracion() ,
       tipoModelo: 1,
       tipoOperacion: 1,
       fecEmi: dateFormat(date),
@@ -88,7 +90,7 @@ module.exports = {
     dte.cuerpoDocumento =
       [{
         numItem: 1,
-        numeroDocumento:  'DTE-01-EV080383-000000000000001',//numeroControl(), //'DTE'+generateRandomCodeWithPattern('^-01-[A-Z0-9]{8}-[0-9]{15}$'),
+        numeroDocumento: numeroControlDTE,//numeroControl(), //'DTE'+generateRandomCodeWithPattern('^-01-[A-Z0-9]{8}-[0-9]{15}$'),
         tipoItem: 1,
         codigo: elementBill.RecLoc,
         codTributo: null,
