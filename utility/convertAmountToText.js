@@ -99,6 +99,61 @@ function numeroALetras(numero) {
 }
 
 
+const decimalALetras = (valorDecimal) => {
+    // Definir arreglos de nombres para números y unidades
+    const unidades = ['', 'UN', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE'];
+    const especiales = ['DIEZ', 'ONCE', 'DOCE', 'TRECE', 'CATORCE', 'QUINCE', 'DIECISEIS', 'DIECISIETE', 'DIECIOCHO', 'DIECINUEVE'];
+    const decenas = ['', '', 'VEINTE', 'TREINTA', 'CUARENTA', 'CINCUENTA', 'SESENTA', 'SETENTA', 'OCHENTA', 'NOVENTA'];
+    const centenas = ['', 'CIENTO', 'DOSCIENTOS', 'TRESCIENTOS', 'CUATROCIENTOS', 'QUINIENTOS', 'SEISCIENTOS', 'SETECIENTOS', 'OCHOCIENTOS', 'NOVECIENTOS'];
+  
+    // Función para convertir un número menor a 1000 a letras
+    function convertirMenorATresCifras(num) {
+      if (num < 10) {
+        return unidades[num];
+      } else if (num < 20) {
+        return especiales[num - 10];
+      } else {
+        const unidad = num % 10;
+        const decena = Math.floor(num / 10);
+        return decenas[decena] + (unidad !== 0 ? ' Y ' + unidades[unidad] : '');
+      }
+    }
+  
+    // Función para convertir un número a letras
+    function convertirATresCifras(num) {
+      if (num === 0) {
+        return '';
+      } else if (num < 100) {
+        return convertirMenorATresCifras(num);
+      } else {
+        const centena = Math.floor(num / 100);
+        const resto = num % 100;
+        return centenas[centena] + (resto !== 0 ? ' ' + convertirMenorATresCifras(resto) : '');
+      }
+    }
+  
+    // Obtener la parte entera y decimal del valor
+    const parteEntera = Math.floor(valorDecimal);
+    const parteDecimal = Math.round((valorDecimal - parteEntera) * 100);
+  
+    // Convertir la parte entera y decimal a letras
+    const letrasParteEntera = convertirATresCifras(parteEntera);
+    const letrasParteDecimal = parteDecimal > 0 ? `CON ${convertirATresCifras(parteDecimal)}/100` : '';
+  
+    // Construir el resultado final
+    const resultado = `${letrasParteEntera} ${letrasParteDecimal} DÓLARES`;
+  
+    return resultado.toUpperCase();
+  }
+  
+  // Ejemplo de uso
+/*   const valor = 31.99;
+  const resultado = decimalALetras(valor);
+  console.log(resultado); */
+  
+
+
 module.exports ={
     numeroALetrasConDecimales,
+    decimalALetras
   }

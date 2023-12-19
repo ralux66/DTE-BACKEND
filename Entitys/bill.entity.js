@@ -1,4 +1,4 @@
-const { numeroALetrasConDecimales, dateFormat,
+const { decimalALetras, dateFormat,
   GenerateCorrelativoDTE, GenerateCodigo } = require('../utility');
 
 module.exports = {
@@ -8,6 +8,7 @@ module.exports = {
     // const codGenerate = generateRandomCodeWithPattern('^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$');
     const numeroControlDTE = GenerateCorrelativoDTE(customer.nrc, 1);
     const numeroCodigoGeneracion = GenerateCodigo();
+    const montoTotal = elementBill.Base + elementBill.SV;
     
     // Identificacion
     dte.identificacion = {
@@ -90,16 +91,16 @@ module.exports = {
     dte.cuerpoDocumento =
       [{
         numItem: 1,
-        numeroDocumento: numeroControlDTE,//numeroControl(), //'DTE'+generateRandomCodeWithPattern('^-01-[A-Z0-9]{8}-[0-9]{15}$'),
+        numeroDocumento: null,//numeroControl(), //'DTE'+generateRandomCodeWithPattern('^-01-[A-Z0-9]{8}-[0-9]{15}$'),
         tipoItem: 1,
         codigo: elementBill.RecLoc,
         codTributo: null,
         descripcion: elementBill.RecLoc,
         cantidad: 1,
-        uniMedida: 59,
-        precioUni: elementBill.Base,
+        uniMedida: 99,
+        precioUni: montoTotal,
         montoDescu: 0,
-        ventaGravada: elementBill.Base,
+        ventaGravada: montoTotal,
         ventaNoSuj: 0,
         ventaExenta: 0,
         tributos: null,
@@ -113,27 +114,27 @@ module.exports = {
     dte.resumen = {
       totalNoSuj: 0,
       totalExenta: 0,
-      totalGravada: elementBill.Base,
-      subTotalVentas: elementBill.Base,
+      totalGravada: montoTotal,
+      subTotalVentas: montoTotal,
       descuNoSuj: 0,
       descuExenta: 0,
       descuGravada: 0,
       porcentajeDescuento: 0,
       totalDescu: 0,
       tributos: [],
-      subTotal: elementBill.Base,
-      ivaRete1: elementBill.SV,
+      subTotal: montoTotal,
+      ivaRete1: 0.00,//elementBill.SV,
       reteRenta: 0,
-      montoTotalOperacion: elementBill.Base,
+      montoTotalOperacion: montoTotal,
       totalNoGravado: 0,
-      totalPagar: elementBill.Base,
-      totalLetras: numeroALetrasConDecimales(elementBill.Base), //funcion convierte a letras
+      totalPagar: montoTotal,
+      totalLetras: decimalALetras(parseFloat(montoTotal)).toUpperCase(), //funcion convierte a letras
       saldoFavor: 0,
       totalIva: elementBill.SV,
       condicionOperacion: 1,
       pagos: [{
-        codigo: '03',
-        montoPago: elementBill.Base,
+        codigo: '01',
+        montoPago: montoTotal,
         referencia: null,
         periodo: null,
         plazo: null

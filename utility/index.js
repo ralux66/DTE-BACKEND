@@ -1,6 +1,6 @@
 const { readExcel } = require('./readExcel');
 const { validateBillExist } = require('./formatDate');
-const { numeroALetrasConDecimales } = require('./convertAmountToText');
+const { numeroALetrasConDecimales,decimalALetras } = require('./convertAmountToText');
 const { httpClient } = require('./httpClient');
 const { dateFormat } = require('./formatDate');
 const { v4: uuid } = require('uuid');
@@ -14,5 +14,6 @@ module.exports = {
     dateFormat,
     uuid,
     GenerateCorrelativoDTE,
-    GenerateCodigo
+    GenerateCodigo,
+    decimalALetras
 }

@@ -212,7 +212,7 @@ module.exports = {
                 } */
                 const dteSend = ObjectBillDte(customer, bill);
 
-                //console.log(JSON.stringify(dteSend));
+                console.log(JSON.stringify(dteSend));
                 /*  axios({
                      method: 'post',
                      url: config.FIRMADOR_LOCAL,
@@ -302,10 +302,9 @@ module.exports = {
                             error.response.data.observaciones.forEach(item => {
                                 console.log(item)
                             });
+
                             console.log(error.response.data.descripcionMsg);
                         })
-
-
                     }).catch(error => res.status(400).send({ error }))
                 })
             })
