@@ -49,7 +49,7 @@ module.exports = {
      * @param {*} req 
      * @param {*} res 
      */
-    async findCustomer(req, res) {
+    async findCustomer(req) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'Find a game'
         return await customer

@@ -14,7 +14,7 @@ const GenerateCorrelativoDTE = (NRCemisor, ultimoBloque) => {
     const codigoDTE = relleno.join("") + ultimoBloque;
     const nrcEMISOR = rellenoNITemisor.join("") + NRCemisor;
     // Devolvemos el codigo DTE
-    console.log('DTE-01-' + nrcEMISOR + '-' + codigoDTE);
+    //console.log('DTE-01-' + nrcEMISOR + '-' + codigoDTE);
     return 'DTE-01-' + nrcEMISOR + '-' + codigoDTE;
 }
 
@@ -32,7 +32,7 @@ const GenerateCodigo = () => {
             numeroGenerado += caracteres[Math.floor(Math.random() * 16)];
         }
     }
-    console.log(numeroGenerado);
+    //console.log(numeroGenerado);
     return numeroGenerado;
 }
 

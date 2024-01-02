@@ -1,13 +1,15 @@
 //const { v4: uuidv4 } = require('uuid');
 const bill = require('../models').bills;
+const logs = require('../models').logs;
 const config = require('../config/config');
 const { httpClient, uuid } = require('../utility')
 const { ObjectBillDte } = require('../Entitys');
 const axios = require('axios');
-const { json } = require('body-parser');
-const { stringify } = require('uuid');
+
+
 
 module.exports = {
+
     findOrCreateBill(req, res) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'Create a new game'
@@ -142,7 +144,7 @@ module.exports = {
     createOneBill(req, res) {
         let workbook_response = utility.readExcelProcess();
         workbook_response.forEach(element => {
-            if (typeof element.RecLoc !== "undefined") {
+            if (typeof element.RecLoc !== "undefined" && element.Base > 0) {
                 return bill.create({
                     customerguid: 1,
                     RecLoc: element.RecLoc,
@@ -163,21 +165,20 @@ module.exports = {
                     SV: element.SV.toFixed(2),
                     Status: 'P'
                 }
-                )
-                    .then(bill => res.status(200).send(bill.ID))
+                ).then(bill => res.status(200).send(bill.ID))
                     .catch(error => res.status(400).send(error));
             }
         });
         //return 'Ok';
     },
 
-    listBill(_, req, res) {
-        // #swagger.tags = ['Games'];
-        // #swagger.description = 'List all the games'
-        return bill
-            .findAll({})
-            .then(bill => res.status(200).send(bill))
-            .catch(error => res.status(400).send(error))
+    async findAndCountAllBill(customer) {
+        return await bill
+            .findAndCountAll({
+                where: {
+                    customerguid: customer.customerguid,
+                }
+            });
     },
 
     async findBill(req, res) {
@@ -195,24 +196,83 @@ module.exports = {
 
     async submitBill(req, res, customer) {
         return await bill
-            .findOne({
+            .findAll({
                 where: {
                     Status: 'P',
                     customerguid: customer.customerguid,
-
                 }
             })
             .then(bill => {
-                //const dteSend = [];
-
-                /* for (let index = 0; index < bill.length; index++) {
+                for (let index = 0; index <= 3; index++) {
                     const element = bill[index];
-                    dteSend.push(ObjectBillDte(customer, element));
-                    //console.log(element);
-                } */
-                const dteSend = ObjectBillDte(customer, bill);
+                    const json_value_dte = ObjectBillDte(customer, element, index + 1);
+                    const postFIRMADTE = {
+                        method: 'post',
+                        url: config.FIRMADOR_LOCAL,
+                        headers: { 'Content-Type': 'application/json' },
+                        data: {
+                            nit: customer.nit,
+                            passwordPri: req.body.passwordPri,
+                            dteJson: json_value_dte //dteSend
+                        }
+                    };
 
-                console.log(JSON.stringify(dteSend));
+                    httpClient.postplus(
+                        postFIRMADTE
+                    ).then((FirmaAut) => {
+
+                        const postAUTH_DTE = {
+                            method: 'post',
+                            url: config.AUTH_DTE,
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            data: {
+                                user: req.body.user,
+                                pwd: req.body.password
+                            }
+                        };
+
+
+                        httpClient.postplus(
+                            postAUTH_DTE
+                        ).then((authdte) => {
+
+                            axios({
+                                method: 'post',
+                                url: config.RECEPCION_DTE, //config.RECEPCION_DTE,config.LOTE_DTE
+                                headers: { Authorization: authdte.body.token, 'Content-Type': 'application/json' },
+                                data: {
+                                    ambiente: '00',
+                                    idEnvio: Math.floor(Math.random() * 10),
+                                    version: 1,
+                                    tipoDte: '01',
+                                    documento: FirmaAut.body,
+                                    //nitEmisor: customer.nit,
+                                    //documentos: FirmaAut.body,
+                                    codigoGeneracion: uuid()
+                                }
+                            }).then(resp => {
+                                console.log({ resp });
+                                bill.update({ Status: 'E' }, {
+                                    where: {
+                                        NumeroControl: element.NumeroControl,
+                                        CodigoGeneracion: element.CodigoGeneracion,
+                                        customerguid: customer.customerguid
+                                    }
+                                });
+                            }).catch((error) => {
+                                error.response.data?.observaciones?.forEach(item => {
+                                    console.log(item)
+                                });
+
+                                console.log(error.response?.data?.descripcionMsg);
+                                console.log(error.response?.data);
+                            })
+                        }).catch(error => res.status(400).send({ error }))
+                    })
+                }
+                //const dteSend = ObjectBillDte(customer, bill);
+
+                //console.log(JSON.stringify(dteSend));
                 /*  axios({
                      method: 'post',
                      url: config.FIRMADOR_LOCAL,
@@ -224,97 +284,18 @@ module.exports = {
                      }
                  }).then(resp => { console.log(resp) }).catch(error=>{console.log(error)}); */
 
-                const postFIRMADTE = {
-                    method: 'post',
-                    url: config.FIRMADOR_LOCAL,
-                    headers: { 'Content-Type': 'application/json' },
-                    data: {
-                        nit: customer.nit,
-                        passwordPri: req.body.passwordPri,
-                        dteJson: dteSend
-                    }
-                };
-
-                httpClient.postplus(
-                    postFIRMADTE
-                ).then((FirmaAut) => {
-                    const postAUTH_DTE = {
-                        method: 'post',
-                        url: config.AUTH_DTE,
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        data: {
-                            user: req.body.user,
-                            pwd: req.body.password
-                        }
-                    };
-
-                    httpClient.postplus(
-                        postAUTH_DTE
-                    ).then((authdte) => {
-                        /*  const bodyDTE = {
-                             ambiente: '00',
-                             idEnvio: uuid(),
-                             version: 1,
-                             tipoDte: '01',
-                             nitEmisor: customer.nit,
-                             documento: FirmaAut.body, //DTE FIRMADO DGI
-                             codigoGeneracion: uuid()
-                         }; */
-
-                        const postDTE = {
-                            method: 'post',
-                            url: config.RECEPCION_DTE,
-                            headers: { Authorization: authdte.body.token, 'Content-Type': 'application/json' },
-                            data: {
-                                ambiente: '00',
-                                idEnvio: Math.floor(Math.random() * 10),
-                                version: 1,
-                                tipoDte: '01',
-                                //nitEmisor: customer.nit,
-                                documento: FirmaAut.body, //DTE FIRMADO DGI
-                                codigoGeneracion: uuid()
-                            }
-                        };
+                //console.log(JSON.stringify(dteSend));
 
 
-                        //console.log(JSON.stringify(postDTE));
-
-                        /*  httpClient.postplus(
-                             postDTE
-                         ) */ //nitEmisor: customer.nit,
-                        axios({
-                            method: 'post',
-                            url: config.RECEPCION_DTE,
-                            headers: { Authorization: authdte.body.token, 'Content-Type': 'application/json' },
-                            data: {
-                                ambiente: '00',
-                                idEnvio: Math.floor(Math.random() * 10),
-                                version: 1,
-                                tipoDte: '01',
-                                documento: FirmaAut.body,
-                                codigoGeneracion: uuid()
-                            }
-                        }).then(resp => {
-                            resp.response.data.observaciones.forEach(item => {
-                                console.log(item)
-                            });
-                        }).catch((error) => {
-                            error.response.data.observaciones.forEach(item => {
-                                console.log(item)
-                            });
-
-                            console.log(error.response.data.descripcionMsg);
-                        })
-                    }).catch(error => res.status(400).send({ error }))
-                })
             })
     },
 
-    async createBill(element) {
+    async createBill(element, email) {
         const response = await bill
             .findOrCreate({
                 where: {
-                    RecLoc: element.RecLoc ?? "",
+                    //RecLoc: element.RecLoc ?? "",
+                    CodigoGeneracion: element.CodigoGeneracion ?? "",
                 },
                 defaults: {
                     customerguid: element.customerguid,
@@ -326,15 +307,17 @@ module.exports = {
                     ArcIata: element.ArcIata,
                     FirstName: element.FirstName,
                     LastName: element.LastName,
-                    Email: 'ralux.zepeda@gmail.com',
+                    Email: email, //customer correo
                     BookingDate: element.BookingDate,
                     FlightDate: element.FlightDate,
                     SegmentOrigin: element.SegmentOrigin,
                     SegmentDest: element.SegmentDest,
-                    Base: element.Base.toFixed(2),
+                    Base: element.Base,
                     CurrencyBase: element.CurrencyBase,
-                    SV: element.SV.toFixed(2),
-                    Status: 'P'
+                    SV: element.SV,
+                    Status: 'P', // pendiente de enviar hacienda
+                    NumeroControl: element.NumeroControl,
+                    CodigoGeneracion: element.CodigoGeneracion
                 }
             });
         //throw new Error('Error al crear el registro');

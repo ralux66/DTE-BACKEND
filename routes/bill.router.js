@@ -1,8 +1,8 @@
 
 const express = require('express');
 const router = express.Router();
-const { readExcel } = require("../utility");
-const { submitBill, listBill, findBill, createOneBille, BulkCreateBille, createBill,
+const { readExcel, GenerateCorrelativoDTE, GenerateCodigo } = require("../utility");
+const { submitBill, listBill, findBill, findAndCountAll, findAndCountAllBill, createBill,
     createOneBill, BulkCreateBill, findCustomer } = require('../controller');
 
 router.get('/api', (req, res) => res.status(200).send({
@@ -35,18 +35,27 @@ router.get('/api/bill/BulkCreate', function (req, res) {
 router.get('/api/bill/findOrCreate', async function (req, res) {
     try {
         req.body.nit = '94501110101012';
-        await findCustomer(req).then((customer) => {
-            //console.log("customer: " + customer.customerguid);
-            if (customer) {
-                const workbook_response = readExcel();
-                for (const element of workbook_response) {
-                    if (typeof element.RecLoc !== "undefined") {
-                        //element.customerguid = '123e4567-e89b-12d3-a456-426655440000';
-                        element.customerguid = customer.customerguid;
-                        createBill(element);
+        await findCustomer(req).then((customer) => {             
+            findAndCountAllBill(customer).then((bill) => {
+                //console.log(bill.count);
+                let lastBill = bill.count ?? 0; 
+                if (customer) {
+                    const workbook_response = readExcel();
+                    for (const element of workbook_response) {
+                        if (typeof element.RecLoc !== "undefined" && parseFloat(element.Base) > 0) {
+                            lastBill += 1;
+                            //const DTE_Control = GenerateCorrelativoDTE(customer.nrc, lastBill);
+                            element.customerguid = customer.customerguid;
+                            element.NumeroControl = GenerateCorrelativoDTE(customer.nrc, lastBill);
+                            element.CodigoGeneracion = GenerateCodigo();
+                            element.Base = parseFloat(element.Base);
+                            element.SV = parseFloat(element.SV);
+                            //create bill on table
+                            createBill(element, customer.correo);
+                        }
                     }
                 }
-            }
+            });
         });
 
         res.send('Fin del proceso');
@@ -62,6 +71,7 @@ router.get('/api/bill/submitbill', async function (req, res) {
     req.body.user = '94501110101012';
     req.body.password = 'SpiritAirline@2023';
     req.body.passwordPri = 'impuestos2016';
+     
     await findCustomer(req)
         .then((customer) => {
             if (customer) {

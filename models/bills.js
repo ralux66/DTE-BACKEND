@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
   }
   bills.init({
     customerguid: DataTypes.STRING,
+    //add
+    NumeroControl :DataTypes.STRING, //"DTE-01-02075433-000000000000001"
+    CodigoGeneracion : DataTypes.STRING, //"4B02E281-8EA3-48D6-7704-0E0014D42229"
+    //end
     RecLoc: DataTypes.STRING,
     SegSeqNbr: DataTypes.INTEGER,
     NbrOfPax: DataTypes.INTEGER,
@@ -29,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     Base: DataTypes.DOUBLE,
     CurrencyBase: DataTypes.STRING,
     SV: DataTypes.DOUBLE,
-    Status: DataTypes.CHAR
+    Status: DataTypes.CHAR,
   }, {
     sequelize,
     modelName: 'bills',

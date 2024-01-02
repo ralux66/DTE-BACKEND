@@ -1,13 +1,12 @@
-const { decimalALetras, dateFormat,
-  GenerateCorrelativoDTE, GenerateCodigo } = require('../utility');
+const { decimalALetras, dateFormat  } = require('../utility');
 
 module.exports = {
-  ObjectBillDte(customer, elementBill) {
+  ObjectBillDte(customer, elementBill, numeroDocumento) {
     const date = new Date();
     const dte = {};
     // const codGenerate = generateRandomCodeWithPattern('^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$');
-    const numeroControlDTE = GenerateCorrelativoDTE(customer.nrc, 1);
-    const numeroCodigoGeneracion = GenerateCodigo();
+    //const numeroControlDTE = GenerateCorrelativoDTE(customer.nrc, 2);
+    //const numeroCodigoGeneracion = GenerateCodigo();
     const montoTotal = elementBill.Base + elementBill.SV;
     
     // Identificacion
@@ -15,8 +14,8 @@ module.exports = {
       version: 1,
       ambiente: '00',
       tipoDte: '01',
-      numeroControl: numeroControlDTE, //numeroControl(),
-      codigoGeneracion: numeroCodigoGeneracion, //codigoGeneracion() ,
+      numeroControl: elementBill.NumeroControl, //numeroControl(),
+      codigoGeneracion: elementBill.CodigoGeneracion, //codigoGeneracion() ,
       tipoModelo: 1,
       tipoOperacion: 1,
       fecEmi: dateFormat(date),
@@ -38,9 +37,9 @@ module.exports = {
       nombreComercial: customer.nombreComercial,
       tipoEstablecimiento: customer.tipoEstablecimiento,
       direccion: {
-        'departamento': '06',
-        'municipio': '14',
-        'complemento': 'Calle El Mirador Entre 87 y 89 Av. Nte. Col. Escalón Edif. Quatro, Niveles 11 y 12 San Salvador'
+        departamento: customer.departamento,
+        municipio: customer.municipio,
+        complemento: customer.complemento
       },
       telefono: customer.telefono,
       correo: customer.correo,
@@ -63,25 +62,7 @@ module.exports = {
       direccion: null,
     };
 
-    /*
-     customerguid: DataTypes.STRING,
-    RecLoc: DataTypes.STRING,
-    SegSeqNbr: DataTypes.INTEGER,
-    NbrOfPax: DataTypes.INTEGER,
-    ArcIata: DataTypes.STRING,
-    FirstName: DataTypes.STRING,
-    LastName: DataTypes.STRING,
-    Email: DataTypes.STRING,
-    BookingDate: DataTypes.DATE,
-    FlightDate: DataTypes.DATE,
-    SegmentOrigin: DataTypes.STRING,
-    SegmentDest: DataTypes.STRING,
-    Base: DataTypes.DOUBLE,
-    CurrencyBase: DataTypes.STRING,
-    SV: DataTypes.DOUBLE,
-    Status: DataTypes.CHAR
-    */
-    // Otros documentos
+   
     dte.otrosDocumentos = null;
 
     // Venta tercero
@@ -91,13 +72,13 @@ module.exports = {
     dte.cuerpoDocumento =
       [{
         numItem: 1,
-        numeroDocumento: null,//numeroControl(), //'DTE'+generateRandomCodeWithPattern('^-01-[A-Z0-9]{8}-[0-9]{15}$'),
         tipoItem: 1,
+        numeroDocumento: null,   
+        cantidad: 1,    
         codigo: elementBill.RecLoc,
         codTributo: null,
-        descripcion: elementBill.RecLoc,
-        cantidad: 1,
         uniMedida: 99,
+        descripcion: 'Ruta '+ elementBill.SegmentOrigin +'/'+ elementBill.SegmentDest,
         precioUni: montoTotal,
         montoDescu: 0,
         ventaGravada: montoTotal,

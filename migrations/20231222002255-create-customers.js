@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('bills', {
+    await queryInterface.createTable('customers', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -12,51 +12,59 @@ module.exports = {
       customerguid: {
         type: Sequelize.STRING
       },
-      
-      RecLoc: {
+      nombre: {
         type: Sequelize.STRING
       },
-      SegSeqNbr: {
-        type: Sequelize.INTEGER
-      },
-      NbrOfPax: {
-        type: Sequelize.INTEGER
-      },
-      ArcIata: {
+      nombreComercial: {
         type: Sequelize.STRING
       },
-      FirstName: {
+      nit: {
         type: Sequelize.STRING
       },
-      LastName: {
+      nrc: {
         type: Sequelize.STRING
       },
-      Email: {
+      tipoEstablecimiento: {
         type: Sequelize.STRING
       },
-      BookingDate: {
-        type: Sequelize.DATE
-      },
-      FlightDate: {
-        type: Sequelize.DATE
-      },
-      SegmentOrigin: {
+      tipoMoneda: {
         type: Sequelize.STRING
       },
-      SegmentDest: {
+      telefono: {
         type: Sequelize.STRING
       },
-      Base: {
-        type: Sequelize.DOUBLE
-      },
-      CurrencyBase: {
+      correo: {
         type: Sequelize.STRING
       },
-      SV: {
-        type: Sequelize.DOUBLE
+      codActividad: {
+        type: Sequelize.STRING
       },
-      Status: {
-        type: Sequelize.CHAR
+      descActividad: {
+        type: Sequelize.STRING
+      },
+      departamento: {
+        type: Sequelize.STRING
+      },
+      municipio: {
+        type: Sequelize.STRING
+      },
+      complemento: {
+        type: Sequelize.STRING
+      },
+      codEstableMH: {
+        type: Sequelize.STRING
+      },
+      codEstable: {
+        type: Sequelize.STRING
+      },
+      codPuntoVentaMH: {
+        type: Sequelize.STRING
+      },
+      codPuntoVenta: {
+        type: Sequelize.STRING
+      },
+      direccion: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -69,6 +77,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('bills');
+    await queryInterface.dropTable('customers');
   }
 };

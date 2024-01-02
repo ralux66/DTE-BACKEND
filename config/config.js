@@ -14,7 +14,10 @@ const configuraionDB = {
     "database": "SpiritAirlines",
     "host": "127.0.0.1",
     "dialect": "postgres",
-    "use_env_variable": ""
+    "use_env_variable": "",
+    "dialectOptions": {
+      "connectTimeout": "60000"
+    }
   },
   "test": {
     "username": "postgres",
@@ -22,7 +25,10 @@ const configuraionDB = {
     "database": "SpiritAirlines",
     "host": "127.0.0.1",
     "dialect": "postgres",
-    "use_env_variable": ""
+    "use_env_variable": "",
+    "dialectOptions": {
+      "connectTimeout": "60000"
+    }
   },
   "production": {
     "username": "postgres",
@@ -30,7 +36,10 @@ const configuraionDB = {
     "database": "SpiritAirlines",
     "host": "127.0.0.1",
     "dialect": "postgres",
-    "use_env_variable": ""
+    "use_env_variable": "",
+    "dialectOptions": {
+      "connectTimeout": "60000"
+    }
   }
 }
 
