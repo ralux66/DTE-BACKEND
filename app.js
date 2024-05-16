@@ -11,7 +11,13 @@ var logsRouter = require('./routes/logs.router');
 var customerRouter = require('./routes/customer.router');
 var cors = require('cors')
 var app = express();
-app.use(cors());
+
+var corsOptions = {
+  origin: 'https://dte-app-34d7c4a76afc.herokuapp.com/',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+app.use(cors(corsOptions));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
