@@ -18,7 +18,7 @@ var corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
