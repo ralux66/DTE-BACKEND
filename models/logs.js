@@ -14,11 +14,13 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   logs.init({
+    
     fecha_hora: DataTypes.DATE,
     nivel: DataTypes.STRING,
     origen: DataTypes.STRING,
     mensaje: DataTypes.STRING,
-    datos: DataTypes.STRING
+    datos: DataTypes.STRING,
+    companyguid: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'logs',

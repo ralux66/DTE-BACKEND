@@ -1,4 +1,4 @@
-const { decimalALetras, dateFormat  } = require('../utility');
+const { decimalALetras, dateFormat, obtenerHoraConFormato } = require('../utility');
 
 module.exports = {
   ObjectBillDte(customer, elementBill, numeroDocumento) {
@@ -7,8 +7,13 @@ module.exports = {
     // const codGenerate = generateRandomCodeWithPattern('^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$');
     //const numeroControlDTE = GenerateCorrelativoDTE(customer.nrc, 2);
     //const numeroCodigoGeneracion = GenerateCodigo();
-    const montoTotal = elementBill.Base + elementBill.SV;
-    
+    const baseMont = Number(elementBill.Base.toFixed(2));
+    const ivaMont = Number(elementBill.SV.toFixed(2));
+    const montoTotalStr = (baseMont + ivaMont).toFixed(2);
+    const montoTotal = Number((baseMont + ivaMont).toFixed(2));
+    //const montoTotal = elementBill.Base.toFixed(2);// (elementBill.Base + elementBill.SV).toFixed(2);
+    //console.log('Fecha-->'+0+date.toLocaleTimeString().split(' ')[0]);
+    //console.log(montoTotal);
     // Identificacion
     dte.identificacion = {
       version: 1,
@@ -19,7 +24,7 @@ module.exports = {
       tipoModelo: 1,
       tipoOperacion: 1,
       fecEmi: dateFormat(date),
-      horEmi: date.toLocaleTimeString(),
+      horEmi: obtenerHoraConFormato(),//date.toLocaleTimeString(),
       tipoMoneda: 'USD',
       tipoContingencia: null,
       motivoContin: null,
@@ -57,12 +62,12 @@ module.exports = {
       nombre: elementBill.FirstName + " " + elementBill.LastName,
       codActividad: null,
       descActividad: null,
-      telefono: null,
-      correo: null,
+      telefono: '22700227',
+      correo: 'ralux.zepeda@gmail.com',
       direccion: null,
     };
 
-   
+
     dte.otrosDocumentos = null;
 
     // Venta tercero
@@ -73,12 +78,12 @@ module.exports = {
       [{
         numItem: 1,
         tipoItem: 1,
-        numeroDocumento: null,   
-        cantidad: 1,    
+        numeroDocumento: null,
+        cantidad: 1,
         codigo: elementBill.RecLoc,
         codTributo: null,
         uniMedida: 99,
-        descripcion: 'Ruta '+ elementBill.SegmentOrigin +'/'+ elementBill.SegmentDest,
+        descripcion: 'Ruta ' + elementBill.SegmentOrigin + '/' + elementBill.SegmentDest,
         precioUni: montoTotal,
         montoDescu: 0,
         ventaGravada: montoTotal,
@@ -87,7 +92,7 @@ module.exports = {
         tributos: null,
         psv: 0,
         noGravado: 0,
-        ivaItem: elementBill.SV,
+        ivaItem: ivaMont,
       }];
 
 
@@ -109,9 +114,9 @@ module.exports = {
       montoTotalOperacion: montoTotal,
       totalNoGravado: 0,
       totalPagar: montoTotal,
-      totalLetras: decimalALetras(parseFloat(montoTotal)).toUpperCase(), //funcion convierte a letras
+      totalLetras: decimalALetras(parseFloat(montoTotalStr)).toUpperCase(), //funcion convierte a letras
       saldoFavor: 0,
-      totalIva: elementBill.SV,
+      totalIva: ivaMont,
       condicionOperacion: 1,
       pagos: [{
         codigo: '01',
@@ -132,6 +137,7 @@ module.exports = {
       observaciones: null,
       placaVehiculo: null,
     };
+
 
     dte.apendice = null;
     dte.ventaTercero = null;

@@ -4,12 +4,14 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser    = require('body-parser');
-
 var indexRouter = require('./routes');
 //var usersRouter = require('./routes/users');
 var billRouter = require('./routes/bill.router');
-
+var logsRouter = require('./routes/logs.router');
+var customerRouter = require('./routes/customer.router');
+var cors = require('cors')
 var app = express();
+app.use(cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -26,6 +28,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 //app.use('/', usersRouter);
 app.use('/', billRouter);
+app.use('/', logsRouter);
+app.use('/', customerRouter);
 
 
 //require('./routes')(app);
@@ -34,6 +38,11 @@ app.use('/', billRouter);
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
+/* app.post('/api/bill/uploadFile', upload.single('file'), (req, res) => {
+  res.set('Access-Control-Allow-Origin', 'http://localhost:4200');
+  return res.json({ message: 'Upload success' });
+}); */
 
 // error handler
 app.use(function(err, req, res, next) {

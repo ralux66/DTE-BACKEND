@@ -1,7 +1,7 @@
 //const utility = require("../utility/readExcel")
 
 const customer = require('../models').customers;
-const { httpClient } = require('../utility')
+ 
 //const { crearBillDte } = require('../Entitys');
 
 module.exports = {
@@ -29,10 +29,10 @@ module.exports = {
      * @param {*} _ 
      * @param {*} res 
      */
-    async listCustomer(_, req, res) {
+     listCustomer(_, req, res) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'List all the games'
-        return await customer.findAll({});
+        return  customer.findAll({});
            /*  .then(customer => res.status(200).send(customer))
             .catch(error => res.status(400).send(error)) */
     },
