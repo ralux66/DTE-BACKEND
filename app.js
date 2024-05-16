@@ -13,7 +13,8 @@ var cors = require('cors')
 var app = express();
 
 var corsOptions = {
-  origin: 'https://dte-app-34d7c4a76afc.herokuapp.com/',
+  //origin: 'https://dte-app-34d7c4a76afc.herokuapp.com/',
+  origin: 'http://localhost:8080/',
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
