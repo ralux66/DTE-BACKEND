@@ -43,7 +43,7 @@ router.get('/api/bill/create', function (req, res) {
 }); */
 
 router.post('/api/bill/findBillByCompany', async function (req, res) {
-    req.body.status = 'E';
+    //req.body.status = 'E';
     //res.set('Access-Control-Allow-Origin', 'http://localhost:4200');
     await findBillByCompany(req, res);
 });
