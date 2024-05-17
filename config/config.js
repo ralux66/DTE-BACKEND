@@ -13,6 +13,7 @@ const configuraionDB = {
     "password": "ragu77",
     "database": "SpiritAirlines",
     "host": "127.0.0.1",
+    "port":"5432",    
     "dialect": "postgres",
     "use_env_variable": "",
     "dialectOptions": {
@@ -36,6 +37,7 @@ const configuraionDB = {
     "database": "d248b7uf1r9fvc",
     "host": "ec2-44-215-176-210.compute-1.amazonaws.com",
     "dialect": "postgres",
+    "port":"5432",
     "use_env_variable": "",
     "dialectOptions": {
       "connectTimeout": "60000"
