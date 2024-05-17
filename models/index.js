@@ -12,6 +12,7 @@ let configDB = {};
 switch (env) {
   case 'development':
     configDB = config.configuraionDB.development;
+    break;
   case 'production':
     configDB = config.configuraionDB.production;
     break;

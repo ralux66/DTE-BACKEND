@@ -19,7 +19,7 @@ const configuraionDB = {
       "connectTimeout": "60000"
     }
   },
-  "test": {
+ /*  "production": {
     "username": "postgres",
     "password": "ragu77",
     "database": "SpiritAirlines",
@@ -29,12 +29,12 @@ const configuraionDB = {
     "dialectOptions": {
       "connectTimeout": "60000"
     }
-  },
+  }, */
   "production": {
-    "username": "postgres",
-    "password": "ragu77",
-    "database": "SpiritAirlines",
-    "host": "127.0.0.1",
+    "username": "gugrxqqxwxxrqp",
+    "password": "d577c6bb6d49b68d78000f3950dd135ad8ce06172f03acf45aa0aedca7a15745",
+    "database": "d248b7uf1r9fvc",
+    "host": "ec2-44-215-176-210.compute-1.amazonaws.com",
     "dialect": "postgres",
     "use_env_variable": "",
     "dialectOptions": {
