@@ -29,10 +29,14 @@ module.exports = {
      * @param {*} _ 
      * @param {*} res 
      */
-     listCustomer(_, req, res) {
+     listCustomer(  req) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'List all the games'
-        return  customer.findAll({});
+        return  customer.findAll({
+            where: {
+                customerguid: req.body.customerguid,
+            }
+        });
            /*  .then(customer => res.status(200).send(customer))
             .catch(error => res.status(400).send(error)) */
     },

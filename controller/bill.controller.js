@@ -188,21 +188,21 @@ module.exports = {
             });
     },
 
-    async findBillByCompany(req, res) {
-        return await bill
+    findBillByCompany(req, res) {
+        return bill
             .findAll({
                 where: {
                     Status: req.body.status,
                     customerguid: req.body.customerguid
                 },
-                order: ['NumeroControl','createdAt'],
+                order: ['NumeroControl', 'createdAt'],
             })
             .then(bill => res.send(bill))
             .catch(error => res.status(400).send(error))
     },
 
-    async submitBill(req, res, customer) {
-        return await bill
+     submitBill(req, res, customer) {
+        return  bill
             .findAll({
                 where: {
                     Status: req.body.status,
@@ -212,7 +212,7 @@ module.exports = {
             })
             .then(billResult => {
                 if (billResult) {
-                    for (let index = 0; index <= billResult.length-1; index++) {
+                    for (let index = 0; index <= billResult.length - 1; index++) {
                         const element = billResult[index];
                         const json_value_dte = ObjectBillDte(customer, element, index + 1);
 
@@ -260,7 +260,7 @@ module.exports = {
                                             codigoGeneracion: uuid()
                                         }
                                     }).then(async resp => {
-                                       // console.log('response-->' + resp);
+                                        // console.log('response-->' + resp);
 
                                         element.Status = 'E';
                                         element.save();
@@ -275,7 +275,7 @@ module.exports = {
                                         });
 
                                         logs.create({
-                                            companyguid : customer.customerguid,
+                                            companyguid: customer.customerguid,
                                             fecha_hora: new Date(),
                                             nive: 'RECEPCION_DTE',
                                             origen: 'DTE-SUBMIT', //JSON.stringify(json_value_dte),
@@ -288,7 +288,7 @@ module.exports = {
                                     });
                                 } else {
                                     logs.create({
-                                        companyguid : customer.customerguid,
+                                        companyguid: customer.customerguid,
                                         fecha_hora: new Date(),
                                         nive: 'AUTH_DTE',
                                         origen: 'authdte.body.token', //JSON.stringify(json_value_dte),
@@ -303,7 +303,7 @@ module.exports = {
                     };
                 } else {
                     logs.create({
-                        companyguid : customer.customerguid,
+                        companyguid: customer.customerguid,
                         fecha_hora: new Date(),
                         nive: 'find bill',
                         origen: 'DTE-FIND-BILL', //JSON.stringify(json_value_dte),
@@ -321,12 +321,12 @@ module.exports = {
                 where: {
                     Status: req.body.status,
                     customerguid: customer.customerguid,
-                   // NumeroControl: req.body.NumeroControl
+                    // NumeroControl: req.body.NumeroControl
                 }
             })
             .then(billResult => {
                 if (billResult) {
-                    for (let index = 0; index <= billResult.length-1; index++) {
+                    for (let index = 0; index <= billResult.length - 1; index++) {
                         const element = billResult[index];
                         const json_value_dte = ObjectBillDte(customer, element, index + 1);
 
@@ -389,7 +389,7 @@ module.exports = {
                                         });
 
                                         logs.create({
-                                            companyguid : customer.customerguid,
+                                            companyguid: customer.customerguid,
                                             fecha_hora: new Date(),
                                             nive: 'RECEPCION_DTE',
                                             origen: 'DTE-SUBMIT', //JSON.stringify(json_value_dte),
@@ -402,7 +402,7 @@ module.exports = {
                                     });
                                 } else {
                                     logs.create({
-                                        companyguid : customer.customerguid,
+                                        companyguid: customer.customerguid,
                                         fecha_hora: new Date(),
                                         nive: 'AUTH_DTE',
                                         origen: 'authdte.body.token', //JSON.stringify(json_value_dte),
@@ -417,7 +417,7 @@ module.exports = {
                     };
                 } else {
                     logs.create({
-                        companyguid : customer.customerguid,
+                        companyguid: customer.customerguid,
                         fecha_hora: new Date(),
                         nive: 'find bill',
                         origen: 'DTE-FIND-BILL', //JSON.stringify(json_value_dte),
@@ -459,7 +459,7 @@ module.exports = {
                     FirstName: element.FirstName,
                     LastName: element.LastName,
                     Email: email, //customer correo
-                    BookingDate:  element.BookingDate,
+                    BookingDate: element.BookingDate,
                     FlightDate: element.FlightDate,
                     SegmentOrigin: element.SegmentOrigin,
                     SegmentDest: element.SegmentDest,

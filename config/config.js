@@ -32,10 +32,10 @@ const configuraionDB = {
     }
   }, */
   "production": {
-    "username": "gugrxqqxwxxrqp",
-    "password": "d577c6bb6d49b68d78000f3950dd135ad8ce06172f03acf45aa0aedca7a15745",
-    "database": "d248b7uf1r9fvc",
-    "host": "ec2-44-215-176-210.compute-1.amazonaws.com",
+    "username": "kduoqdnxfolsgf",
+    "password": "798c7a47dec4d94e2e64d577d6d33a0b151e80180022b65e386db919ab8a36da",
+    "database": "d3kd8fofmpd2d0",
+    "host": "ec2-34-237-41-95.compute-1.amazonaws.com",
     "dialect": "postgres",
     "port":"5432",
     "use_env_variable": "",

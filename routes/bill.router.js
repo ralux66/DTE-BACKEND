@@ -42,16 +42,16 @@ router.get('/api/bill/create', function (req, res) {
     });
 }); */
 
-router.post('/api/bill/findBillByCompany', async function (req, res) {
+router.post('/api/bill/findBillByCompany',  function (req, res) {
     //req.body.status = 'E';
     //res.set('Access-Control-Allow-Origin', 'http://localhost:4200');
-    await findBillByCompany(req, res);
+     findBillByCompany(req, res);
 });
 
-router.post('/api/bill/findAllPendingBillByCompany', async function (req, res) {
+router.post('/api/bill/findAllPendingBillByCompany',  function (req, res) {
     //req.body.Status = 'E';
 
-    await findBillByCompany(req, res);
+     findBillByCompany(req, res);
 });
 
 router.get('/api/bill/BulkCreate', function (req, res) {

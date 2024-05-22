@@ -31,6 +31,14 @@ router.post('/api/customer/allCustomer', function (req, res) {
         .catch(error => res.status(400).send(error));
 });
 
+router.post('/api/customer/findbycompnayguid', function (req, res) {
+    //req.body.nit = '06140307821050';
+    listCustomer(req)
+        .then(customer => res.status(200).send(customer))
+        .catch(error => res.status(400).send(error));
+});
+
+
 module.exports = router;
 
 

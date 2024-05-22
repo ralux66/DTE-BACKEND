@@ -9,6 +9,8 @@ var indexRouter = require('./routes');
 var billRouter = require('./routes/bill.router');
 var logsRouter = require('./routes/logs.router');
 var customerRouter = require('./routes/customer.router');
+var userRouter = require('./routes/user.router');
+
 var cors = require('cors')
 var app = express();
 
@@ -37,7 +39,7 @@ app.use('/', indexRouter);
 app.use('/', billRouter);
 app.use('/', logsRouter);
 app.use('/', customerRouter);
-
+app.use('/', userRouter);
 
 //require('./routes')(app);
 
