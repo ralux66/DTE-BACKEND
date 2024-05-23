@@ -10,7 +10,7 @@ const { findUser } = require('../controller');
 }); */
 
 router.post('/api/user/getUserByPassword', function (req, res) {
-    //req.body.nit = '06140307821050';
+    console.log(req.body.password);
     findUser(req)
         .then(user => res.status(200).send(user))
         .catch(error => res.status(400).send(error));

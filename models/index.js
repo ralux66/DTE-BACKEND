@@ -10,6 +10,7 @@ const { URL } = require('url');
 const env = config.NODE_ENV.trim() || 'development';
 let configDB = {};
 let sequelize;
+//sequelize = new Sequelize(process.env.DATABASE_URL);
 //SWITCH BASE DE DATOS PRODUCCION - DEV
 switch (env) {
   case 'development':
@@ -18,7 +19,8 @@ switch (env) {
     break;
   case 'production':
     configDB = config.configuraionDB.production;
-    sequelize = new Sequelize(process.env[DATABASE_URL],{});
+    //sequelize = new Sequelize(process.env.DATABASE_URL,{});
+    sequelize = new Sequelize(configDB.database, configDB.username, configDB.password, configDB);
     break;
   default:
     break;
@@ -32,7 +34,7 @@ const db = {};
 /* if (configDB.use_env_variable) {
   sequelize = new Sequelize(process.env[configDB.use_env_variable], configDB);
 } else {
-  //sequelize = new Sequelize(configDB.database, configDB.username, configDB.password, configDB);
+  sequelize = new Sequelize(configDB.database, configDB.username, configDB.password, configDB);
   sequelize = new Sequelize(config.DATABASE_URL,{});
 }
  */

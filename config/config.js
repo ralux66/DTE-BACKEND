@@ -38,10 +38,14 @@ const configuraionDB = {
     "host": "ec2-34-237-41-95.compute-1.amazonaws.com",
     "dialect": "postgres",
     "port":"5432",
-    "use_env_variable": "",
+    "use_env_variable": "",   
     "dialectOptions": {
-      "connectTimeout": "60000"
-    }
+      "connectTimeout": "60000",
+      "ssl": {
+        "require": "false",
+        "rejectUnauthorized": "false"
+      }
+    },
   }
 }
 
