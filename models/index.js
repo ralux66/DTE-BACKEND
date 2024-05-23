@@ -23,6 +23,7 @@ switch (env) {
     sequelize = new Sequelize(process.env.DATABASE_URL, {
       "dialect": "postgres", "dialectOptions": {
         "connectTimeout": "60000",
+        "native":"true",
         "ssl": {
           "rejectUnauthorized": "false"
         }
