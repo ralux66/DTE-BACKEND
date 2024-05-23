@@ -6,15 +6,19 @@ const Sequelize = require('sequelize');
 const process = require('process');
 const basename = path.basename(__filename);
 const config = require('../config/config');
+const { URL } = require('url');
 const env = config.NODE_ENV.trim() || 'development';
 let configDB = {};
+let sequelize;
 //SWITCH BASE DE DATOS PRODUCCION - DEV
 switch (env) {
   case 'development':
     configDB = config.configuraionDB.development;
+    sequelize = new Sequelize(process.env[configDB.use_env_variable], configDB);
     break;
   case 'production':
     configDB = config.configuraionDB.production;
+    sequelize = new Sequelize(config.DATABASE_URL,{});
     break;
   default:
     break;
@@ -22,13 +26,16 @@ switch (env) {
 //const config = require('../config/config.json')[env];
 const db = {};
 
-let sequelize;
-if (configDB.use_env_variable) {
+
+
+
+/* if (configDB.use_env_variable) {
   sequelize = new Sequelize(process.env[configDB.use_env_variable], configDB);
 } else {
-  sequelize = new Sequelize(configDB.database, configDB.username, configDB.password, configDB);
+  //sequelize = new Sequelize(configDB.database, configDB.username, configDB.password, configDB);
+  sequelize = new Sequelize(config.DATABASE_URL,{});
 }
-
+ */
 fs
   .readdirSync(__dirname)
   .filter(file => {

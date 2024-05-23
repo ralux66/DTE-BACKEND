@@ -59,4 +59,5 @@ module.exports = {
   LOTE_DTE: process.env.LOTE_DTE,
   RECEPCION_DTE: process.env.RECEPCION_DTE,
   FIRMADOR_LOCAL: process.env.FIRMADOR_LOCAL,
+  DATABASE_URL: process.env.DATABASE_URL,
 }
