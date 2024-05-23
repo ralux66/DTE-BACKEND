@@ -18,7 +18,7 @@ switch (env) {
     break;
   case 'production':
     configDB = config.configuraionDB.production;
-    sequelize = new Sequelize(process.env.DATABASE_URL,{});
+    sequelize = new Sequelize(process.env[DATABASE_URL],{});
     break;
   default:
     break;
