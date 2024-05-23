@@ -15,13 +15,13 @@ let sequelize;
 switch (env) {
   case 'development':
     configDB = config.configuraionDB.development;
-    sequelize = new Sequelize(process.env[configDB.use_env_variable], configDB);
+    sequelize = new Sequelize(configDB.database, configDB.username, configDB.password, configDB);
     break;
   case 'production':
     //configDB = config.configuraionDB.production;
     //sequelize = new Sequelize(process.env.DATABASE_URL,{});
     sequelize = new Sequelize(process.env.DATABASE_URL, {
-      "dialect": "postgres","native":"true" , "dialectOptions": {
+      "dialect": "postgres", "dialectOptions": {
         "connectTimeout": "60000",
         "native":"true"       
       }

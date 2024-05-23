@@ -15,8 +15,10 @@ const configuraionDB = {
     "host": "127.0.0.1",
     "port":"5432",    
     "dialect": "postgres",
+   /*  "native":"true", */
     "use_env_variable": "",
     "dialectOptions": {
+      "native":"true",
       "connectTimeout": "60000"
     }
   },
@@ -62,5 +64,5 @@ module.exports = {
   LOTE_DTE: process.env.LOTE_DTE,
   RECEPCION_DTE: process.env.RECEPCION_DTE,
   FIRMADOR_LOCAL: process.env.FIRMADOR_LOCAL,
-  DATABASE_URL: process.env.DATABASE_URL,
+  ///DATABASE_URL: process.env.DATABASE_URL,
 }
