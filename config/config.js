@@ -41,8 +41,7 @@ const configuraionDB = {
     "use_env_variable": "",   
     "dialectOptions": {
       "connectTimeout": "60000",
-      "ssl": {
-        "require": "false",
+      "ssl": {        
         "rejectUnauthorized": "false"
       }
     },

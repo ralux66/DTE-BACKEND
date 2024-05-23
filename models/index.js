@@ -20,7 +20,14 @@ switch (env) {
   case 'production':
     //configDB = config.configuraionDB.production;
     //sequelize = new Sequelize(process.env.DATABASE_URL,{});
-    sequelize = new Sequelize(process.env.DATABASE_URL,{ "dialect": "postgres"});
+    sequelize = new Sequelize(process.env.DATABASE_URL, {
+      "dialect": "postgres", "dialectOptions": {
+        "connectTimeout": "60000",
+        "ssl": {
+          "rejectUnauthorized": "false"
+        }
+      }
+    });
     break;
   default:
     break;
