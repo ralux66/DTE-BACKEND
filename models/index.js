@@ -6,7 +6,7 @@ const Sequelize = require('sequelize');
 const process = require('process');
 const basename = path.basename(__filename);
 const config = require('../config/config');
-const { URL } = require('url');
+//const { URL } = require('url');
 const env = config.NODE_ENV.trim() || 'development';
 let configDB = {};
 let sequelize;
@@ -18,9 +18,9 @@ switch (env) {
     sequelize = new Sequelize(process.env[configDB.use_env_variable], configDB);
     break;
   case 'production':
-    configDB = config.configuraionDB.production;
+    //configDB = config.configuraionDB.production;
     //sequelize = new Sequelize(process.env.DATABASE_URL,{});
-    sequelize = new Sequelize(configDB.database, configDB.username, configDB.password, configDB);
+    sequelize = new Sequelize(process.env.DATABASE_URL,{ "dialect": "postgres"});
     break;
   default:
     break;

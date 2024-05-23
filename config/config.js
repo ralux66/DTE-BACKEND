@@ -31,7 +31,7 @@ const configuraionDB = {
       "connectTimeout": "60000"
     }
   }, */
-  "production": {
+ /*  "production": {
     "username": "kduoqdnxfolsgf",
     "password": "798c7a47dec4d94e2e64d577d6d33a0b151e80180022b65e386db919ab8a36da",
     "database": "d3kd8fofmpd2d0",
@@ -46,7 +46,7 @@ const configuraionDB = {
         "rejectUnauthorized": "false"
       }
     },
-  }
+  } */
 }
 
 /* const configvalue = ()=>{
