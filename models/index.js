@@ -21,12 +21,9 @@ switch (env) {
     //configDB = config.configuraionDB.production;
     //sequelize = new Sequelize(process.env.DATABASE_URL,{});
     sequelize = new Sequelize(process.env.DATABASE_URL, {
-      "dialect": "postgres", "dialectOptions": {
+      "dialect": "postgres","native":"true" , "dialectOptions": {
         "connectTimeout": "60000",
-        "native":"true",
-        "ssl": {
-          "rejectUnauthorized": "false"
-        }
+        "native":"true"       
       }
     });
     break;
