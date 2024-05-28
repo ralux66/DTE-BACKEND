@@ -53,13 +53,13 @@ module.exports = {
      * @param {*} req 
      * @param {*} res 
      */
-    async findCustomer(req) {
+     findCustomer(req) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'Find a game'
-        return await customer
+        return  customer
             .findOne({
                 where: {
-                    nit: req.body.companynit,
+                    customerguid: req.body.customerguid,
                 }
             });
           

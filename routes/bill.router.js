@@ -4,17 +4,18 @@ const router = express.Router();
 const { readExcel, GenerateCorrelativoDTE, GenerateCodigo, readExcelByName } = require("../utility");
 const { submitBill, findBillByCompany,
     findAndCountAllBill, createBill,
-    createOneBill, BulkCreateBill, findCustomer,submitAllBill } = require('../controller');
+    createOneBill, BulkCreateBill, findCustomer, submitAllBill } = require('../controller');
 const path = require('path');
 const multer = require('multer');
-const { Console } = require('console');
+
 
 const storage = multer.diskStorage({
     destination: 'public/FileExcel/',
     filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const uniqueSuffix = Date.now() + '_' + Math.round(Math.random() * 1E9);
         const ext = path.extname(file.originalname);
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+        cb(null, file.originalname + '_' + uniqueSuffix);
+        //cb(null, file.fieldname + '-' + uniqueSuffix + ext);
     }
 });
 const upload = multer({ storage });
@@ -42,16 +43,16 @@ router.get('/api/bill/create', function (req, res) {
     });
 }); */
 
-router.post('/api/bill/findBillByCompany',  function (req, res) {
+router.post('/api/bill/findBillByCompany', function (req, res) {
     //req.body.status = 'E';
     //res.set('Access-Control-Allow-Origin', 'http://localhost:4200');
-     findBillByCompany(req, res);
+    findBillByCompany(req, res);
 });
 
-router.post('/api/bill/findAllPendingBillByCompany',  function (req, res) {
+router.post('/api/bill/findAllPendingBillByCompany', function (req, res) {
     //req.body.Status = 'E';
 
-     findBillByCompany(req, res);
+    findBillByCompany(req, res);
 });
 
 router.get('/api/bill/BulkCreate', function (req, res) {
@@ -110,7 +111,7 @@ router.post('/api/bill/submitbill', async function (req, res) {
                 res.status(200).send('No se encontro el customer');
             }
         })
-        //.catch(error => res.status(400).send(error));
+    //.catch(error => res.status(400).send(error));
 
 });
 
@@ -131,7 +132,7 @@ router.post('/api/bill/submitAllbill', async function (req, res) {
                 res.status(200).send('No se encontro el customer');
             }
         })
-        //.catch(error => res.status(400).send(error));
+    //.catch(error => res.status(400).send(error));
 
 });
 
@@ -145,9 +146,13 @@ router.post('/api/bill/submitAllbill', async function (req, res) {
 //PASO 1 AND SET ON TABLE
 router.post('/api/bill/uploadFile', upload.single('file'), function (req, res, next) {
     const fileName = req.file?.filename;
+    const customerguid = fileName.split('_')[0]; 
+    req.body.customerguid = customerguid;
+    let contadorFileasDoc=0;
     try {
-        req.body.companynit = '94501110101012';
+        //req.body.companynit = '94501110101012';
         findCustomer(req).then((customer) => {
+            const loteTransaction = customer.nrc + '-' + Date.now().toString();
             findAndCountAllBill(customer).then((bill) => {
                 let lastBill = bill.count ?? 0;
                 if (customer) {
@@ -155,7 +160,9 @@ router.post('/api/bill/uploadFile', upload.single('file'), function (req, res, n
                     if (typeof fileName !== "undefined") {
                         const workbook_response = readExcelByName(fileName);
                         for (const element of workbook_response) {
+
                             if (typeof element.RecLoc !== "undefined" && parseFloat(element.Base) > 0) {
+                                contadorFileasDoc+=1;
                                 lastBill += 1;
                                 //const DTE_Control = GenerateCorrelativoDTE(customer.nrc, lastBill);
                                 element.customerguid = customer.customerguid;
@@ -163,8 +170,9 @@ router.post('/api/bill/uploadFile', upload.single('file'), function (req, res, n
                                 element.CodigoGeneracion = GenerateCodigo();
                                 element.Base = parseFloat(element.Base);
                                 element.SV = parseFloat(element.SV);
-                                element.BookingDate =  new Date(element.BookingDate); 
-                                element.FlightDate =  new Date(element.FlightDate);
+                                element.BookingDate = new Date(element.BookingDate);
+                                element.FlightDate = new Date(element.FlightDate);
+                                element.BatchTransaction = loteTransaction;
                                 //create bill on table
                                 createBill(element, customer.correo);
                             }
@@ -175,7 +183,7 @@ router.post('/api/bill/uploadFile', upload.single('file'), function (req, res, n
         });
 
         //res.status(200).send('Fin del proceso');
-        res.status(200).send('Fin del proceso');
+        res.status(200).send({"rowcount":contadorFileasDoc,"lotecontrol":loteTransaction});
     } catch (error) {
         console.log({ error });
         res.status(500).send('Error al crear los registros');

@@ -179,8 +179,8 @@ module.exports = {
         //return 'Ok';
     },
 
-    async findAndCountAllBill(customer) {
-        return await bill
+     findAndCountAllBill(customer) {
+        return  bill
             .findAndCountAll({
                 where: {
                     customerguid: customer.customerguid,
@@ -201,8 +201,8 @@ module.exports = {
             .catch(error => res.status(400).send(error))
     },
 
-     submitBill(req, res, customer) {
-        return  bill
+    submitBill(req, res, customer) {
+        return bill
             .findAll({
                 where: {
                     Status: req.body.status,
@@ -263,6 +263,7 @@ module.exports = {
                                         // console.log('response-->' + resp);
 
                                         element.Status = 'E';
+                                        element.SubmitDte = new Date();
                                         element.save();
                                         //updateBill(element, customer); //UPDATE BILL
                                     }).catch((error) => {
@@ -374,9 +375,10 @@ module.exports = {
                                             codigoGeneracion: uuid()
                                         }
                                     }).then(async resp => {
-                                        console.log('response-->' + resp);
+                                        //console.log('response-->' + resp);
 
                                         element.Status = 'E';
+                                        element.SubmitDte = new Date();
                                         element.save();
                                         //updateBill(element, customer); //UPDATE BILL
                                     }).catch((error) => {
@@ -397,8 +399,8 @@ module.exports = {
                                             datos: element.NumeroControl
                                         });
 
-                                        console.log(error.response?.data?.descripcionMsg);
-                                        console.log(error.response?.data);
+                                        /*  console.log(error.response?.data?.descripcionMsg);
+                                         console.log(error.response?.data); */
                                     });
                                 } else {
                                     logs.create({
@@ -441,8 +443,8 @@ module.exports = {
             },
         );
     },
-    async createBill(element, email) {
-        const response = await bill
+     createBill(element, email) {
+        const response =  bill
             .findOrCreate({
                 where: {
                     //RecLoc: element.RecLoc ?? "",
@@ -468,7 +470,9 @@ module.exports = {
                     SV: element.SV,
                     Status: 'P', // pendiente de enviar hacienda
                     NumeroControl: element.NumeroControl,
-                    CodigoGeneracion: element.CodigoGeneracion
+                    CodigoGeneracion: element.CodigoGeneracion,
+                    SubmitDte: null,
+                    BatchTransaction: element.BatchTransaction
                 }
             });
         //throw new Error('Error al crear el registro');
