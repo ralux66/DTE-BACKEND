@@ -179,8 +179,8 @@ module.exports = {
         //return 'Ok';
     },
 
-     findAndCountAllBill(customer) {
-        return  bill
+    findAndCountAllBill(customer) {
+        return bill
             .findAndCountAll({
                 where: {
                     customerguid: customer.customerguid,
@@ -195,7 +195,10 @@ module.exports = {
                     Status: req.body.status,
                     customerguid: req.body.customerguid
                 },
-                order: ['NumeroControl', 'createdAt'],
+                order: [
+                    ['NumeroControl', 'DESC'],
+                    ['createdAt', 'DESC']
+                ]
             })
             .then(bill => res.send(bill))
             .catch(error => res.status(400).send(error))
@@ -443,8 +446,8 @@ module.exports = {
             },
         );
     },
-     createBill(element, email) {
-        const response =  bill
+    createBill(element, email) {
+        const response = bill
             .findOrCreate({
                 where: {
                     //RecLoc: element.RecLoc ?? "",

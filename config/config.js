@@ -1,11 +1,13 @@
-require('dotenv').config({ path: './development.env' });
+const dotenv = require('dotenv');
 //const path = require('path');
 
-/* dotenv.config({  
-  //path: path.resolve('../config/' + process.env.NODE_ENV + '.env')
-  path: path.resolve('../config/' + 'development' + '.env')
-});
- */
+// Determina el archivo de configuración según el ambiente
+const envFile = process.env.NODE_ENV === 'production' ? './production.env' : './development.env';
+
+// Carga el archivo de configuración
+dotenv.config({ path: envFile });
+
+ 
 const configuraionDB = {
 
   "development": {

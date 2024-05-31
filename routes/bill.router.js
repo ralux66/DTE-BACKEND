@@ -94,14 +94,14 @@ router.get('/api/bill/findOrCreate', async function (req, res) {
 });
 
 //PASO 3
-router.post('/api/bill/submitbill', async function (req, res) {
+router.post('/api/bill/submitbill',  function (req, res) {
     //console.log(req);
     /*   req.body.companynit = '94501110101012';
       req.body.user = '94501110101012';
       req.body.password = 'SpiritAirline@2023';
       req.body.passwordPri = 'impuestos2016'; */
 
-    await findCustomer(req)
+     findCustomer(req)
         .then((customer) => {
             if (customer) {
                 submitBill(req, res, customer)
@@ -146,23 +146,23 @@ router.post('/api/bill/submitAllbill', async function (req, res) {
 //PASO 1 AND SET ON TABLE
 router.post('/api/bill/uploadFile', upload.single('file'), function (req, res, next) {
     const fileName = req.file?.filename;
-    const customerguid = fileName.split('_')[0]; 
+    const customerguid = fileName.split('_')[0];
     req.body.customerguid = customerguid;
-    let contadorFileasDoc=0;
+    let contadorFileasDoc = 0;
+    let resumFile = {};
     try {
         //req.body.companynit = '94501110101012';
         findCustomer(req).then((customer) => {
-            const loteTransaction = customer.nrc + '-' + Date.now().toString();
             findAndCountAllBill(customer).then((bill) => {
                 let lastBill = bill.count ?? 0;
                 if (customer) {
                     //console.log('file name-->' + fileName);
                     if (typeof fileName !== "undefined") {
+                        const loteTransaction = customer.nrc + '-' + Date.now().toString();
                         const workbook_response = readExcelByName(fileName);
                         for (const element of workbook_response) {
-
                             if (typeof element.RecLoc !== "undefined" && parseFloat(element.Base) > 0) {
-                                contadorFileasDoc+=1;
+                                contadorFileasDoc += 1;
                                 lastBill += 1;
                                 //const DTE_Control = GenerateCorrelativoDTE(customer.nrc, lastBill);
                                 element.customerguid = customer.customerguid;
@@ -174,7 +174,10 @@ router.post('/api/bill/uploadFile', upload.single('file'), function (req, res, n
                                 element.FlightDate = new Date(element.FlightDate);
                                 element.BatchTransaction = loteTransaction;
                                 //create bill on table
-                                createBill(element, customer.correo);
+                                createBill(element, customer.correo).then(result => {
+                                    console.log('Bill Create' + { result });
+                                    resumFile = { "loteTransaction": loteTransaction, "contadorFileasDoc": contadorFileasDoc }
+                                });
                             }
                         }
                     }
@@ -182,8 +185,13 @@ router.post('/api/bill/uploadFile', upload.single('file'), function (req, res, n
             });
         });
 
+
         //res.status(200).send('Fin del proceso');
-        res.status(200).send({"rowcount":contadorFileasDoc,"lotecontrol":loteTransaction});
+        res.status(200).send({  
+            endProces:true,           
+            reportProgress: true,
+            observe: 'events'//now when you will subscribe you will get the events, in his case he neded responseType: 'blob', because from the back end he was receiving the blob too.
+        });
     } catch (error) {
         console.log({ error });
         res.status(500).send('Error al crear los registros');
