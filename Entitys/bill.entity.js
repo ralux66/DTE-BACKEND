@@ -24,7 +24,7 @@ module.exports = {
       tipoModelo: 1,
       tipoOperacion: 1,
       fecEmi: dateFormat(date),
-      horEmi: obtenerHoraConFormato(),//date.toLocaleTimeString(),
+      horEmi: obtenerHoraConFormato(date),//date.toLocaleTimeString(),
       tipoMoneda: 'USD',
       tipoContingencia: null,
       motivoContin: null,
