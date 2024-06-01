@@ -221,7 +221,7 @@ module.exports = {
 
                         const postFIRMADTE = {
                             method: 'post',
-                            url: config.FIRMADOR_LOCAL,
+                            url: process.env.FIRMADOR_LOCAL,
                             headers: { 'Content-Type': 'application/json' },
                             data: {
                                 nit: customer.nit,
@@ -235,7 +235,7 @@ module.exports = {
                         ).then((FirmaAut) => {
                             const postAUTH_DTE = {
                                 method: 'post',
-                                url: config.AUTH_DTE,
+                                url: process.env.AUTH_DTE,
                                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                                 data: {
                                     user: req.body.userAPI,
@@ -250,7 +250,7 @@ module.exports = {
                                 if (authdte) {
                                     axios({
                                         method: 'post',
-                                        url: config.RECEPCION_DTE, //config.RECEPCION_DTE,config.LOTE_DTE
+                                        url: process.env.RECEPCION_DTE, //config.RECEPCION_DTE,config.LOTE_DTE
                                         headers: { Authorization: authdte.body.token, 'Content-Type': 'application/json' },
                                         data: {
                                             ambiente: '00',
@@ -319,8 +319,8 @@ module.exports = {
         //.catch(error => res.status(500).send(error))
     },
 
-    async submitAllBill(req, res, customer) {
-        return await bill
+     submitAllBill(req, res, customer) {
+        return  bill
             .findAll({
                 where: {
                     Status: req.body.status,
@@ -336,7 +336,7 @@ module.exports = {
 
                         const postFIRMADTE = {
                             method: 'post',
-                            url: config.FIRMADOR_LOCAL,
+                            url: process.env.FIRMADOR_LOCAL,
                             headers: { 'Content-Type': 'application/json' },
                             data: {
                                 nit: customer.nit,
@@ -350,7 +350,7 @@ module.exports = {
                         ).then((FirmaAut) => {
                             const postAUTH_DTE = {
                                 method: 'post',
-                                url: config.AUTH_DTE,
+                                url: process.env.AUTH_DTE,
                                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                                 data: {
                                     user: req.body.userAPI,
@@ -365,7 +365,7 @@ module.exports = {
                                 if (authdte) {
                                     axios({
                                         method: 'post',
-                                        url: config.RECEPCION_DTE, //config.RECEPCION_DTE,config.LOTE_DTE
+                                        url: process.env.RECEPCION_DTE, //config.RECEPCION_DTE,config.LOTE_DTE
                                         headers: { Authorization: authdte.body.token, 'Content-Type': 'application/json' },
                                         data: {
                                             ambiente: '00',

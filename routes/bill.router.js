@@ -115,14 +115,14 @@ router.post('/api/bill/submitbill',  function (req, res) {
 
 });
 
-router.post('/api/bill/submitAllbill', async function (req, res) {
+router.post('/api/bill/submitAllbill',  function (req, res) {
     //console.log(req);
     /*   req.body.companynit = '94501110101012';
       req.body.user = '94501110101012';
       req.body.password = 'SpiritAirline@2023';
       req.body.passwordPri = 'impuestos2016'; */
 
-    await findCustomer(req)
+     findCustomer(req)
         .then((customer) => {
             if (customer) {
                 submitAllBill(req, res, customer)
