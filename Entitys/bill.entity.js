@@ -13,7 +13,7 @@ module.exports = {
     const montoTotal = Number((baseMont + ivaMont).toFixed(2));
     //const montoTotal = elementBill.Base.toFixed(2);// (elementBill.Base + elementBill.SV).toFixed(2);
     //console.log('Fecha-->'+0+date.toLocaleTimeString().split(' ')[0]);
-    //console.log(montoTotal);
+    console.log('HORA DEL SISTEMA:: -->'+obtenerHoraConFormato());
     // Identificacion
     dte.identificacion = {
       version: 1,
