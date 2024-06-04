@@ -14,9 +14,9 @@ const dateFormat = (date) => {
     return [year, month, day].join('-');
 };
 
-const obtenerHoraConFormato = (date)=> {
+const obtenerHoraConFormato = (fecha)=> {
     // Obtener la hora actual
-    var fecha = date;
+    //var fecha = date;
     var hora = fecha.getHours();
     var minutos = fecha.getMinutes();
     var segundos = fecha.getSeconds();

@@ -95,7 +95,7 @@ router.get('/api/bill/findOrCreate', async function (req, res) {
 
 //PASO 3
 router.post('/api/bill/submitbill',  function (req, res) {
-    //console.log(req);
+    //console.log(req); submitbill
     /*   req.body.companynit = '94501110101012';
       req.body.user = '94501110101012';
       req.body.password = 'SpiritAirline@2023';
