@@ -225,7 +225,7 @@ module.exports = {
                             headers: { 'Content-Type': 'application/json' },
                             data: {
                                 nit: customer.nit,
-                                passwordPri: req.body.passwordFirmardocumento,
+                                passwordPri: req.body.passwordfirmardocumento,
                                 dteJson: json_value_dte //dteSend
                             }
                         };
@@ -238,8 +238,8 @@ module.exports = {
                                 url: process.env.AUTH_DTE,
                                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                                 data: {
-                                    user: req.body.userAPI,
-                                    pwd: req.body.passwordAuth
+                                    user: req.body.userapi,
+                                    pwd: req.body.passwordauth
                                 }
                             };
                             httpClient.postplus(
@@ -340,7 +340,7 @@ module.exports = {
                             headers: { 'Content-Type': 'application/json' },
                             data: {
                                 nit: customer.nit,
-                                passwordPri: req.body.passwordFirmardocumento,
+                                passwordPri: req.body.passwordfirmardocumento,
                                 dteJson: json_value_dte //dteSend
                             }
                         };
@@ -353,8 +353,8 @@ module.exports = {
                                 url: process.env.AUTH_DTE,
                                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                                 data: {
-                                    user: req.body.userAPI,
-                                    pwd: req.body.passwordAuth
+                                    user: req.body.userapi,
+                                    pwd: req.body.passwordauth
                                 }
                             };
                             httpClient.postplus(

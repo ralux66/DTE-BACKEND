@@ -31,7 +31,13 @@ module.exports = (sequelize, DataTypes) => {
     codEstableMH: DataTypes.STRING,
     codEstable: DataTypes.STRING,
     codPuntoVentaMH: DataTypes.STRING,
-    codPuntoVenta: DataTypes.STRING
+    codPuntoVenta: DataTypes.STRING,
+    userapi: DataTypes.STRING,
+    passwordauth: DataTypes.STRING,
+    passwordfirmardocumento: DataTypes.STRING,
+    
+    
+    
   }, {
     sequelize,
     modelName: 'customers',
