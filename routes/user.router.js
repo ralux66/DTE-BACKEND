@@ -16,6 +16,7 @@ router.post('/api/user/getUserByPassword', function (req, res) {
         .then((user) => {
             if (user) {
                 if (md5(user.password) === req.body.password) {
+                    user.password = md5(user.password);
                     res.status(200).send(user)
                 } else {
                     res.status(200).send(null)
