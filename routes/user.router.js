@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const { findUser } = require('../controller');
+var md5 = require('js-md5');
 
 /* router.get('/api/user/create', async function (req, res) {
     req.body.nit = '06140307821050';
@@ -10,9 +11,18 @@ const { findUser } = require('../controller');
 }); */
 
 router.post('/api/user/getUserByPassword', function (req, res) {
-   // console.log(req.body.password);
+    // console.log(req.body.password);
     findUser(req)
-        .then(user => res.status(200).send(user))
+        .then((user) => {
+            if (user) {
+                if (md5(user.password) === req.body.password) {
+                    res.status(200).send(user)
+                } else {
+                    res.status(200).send(null)
+                }
+            }
+
+        })
         .catch(error => res.status(400).send(error));
 });
 

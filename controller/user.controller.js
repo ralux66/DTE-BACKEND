@@ -55,7 +55,7 @@ module.exports = {
         return user
             .findOne({
                 where: {
-                    password: req.body.password,
+                    //password: req.body.password,
                     email: req.body.email,
                 }
             });
