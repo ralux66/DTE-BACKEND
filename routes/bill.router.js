@@ -4,7 +4,8 @@ const router = express.Router();
 const { readExcel, GenerateCorrelativoDTE, GenerateCodigo, readExcelByName } = require("../utility");
 const { submitBill, findBillByCompany,
     findAndCountAllBill, createBill,
-    createOneBill, BulkCreateBill, findCustomer, submitAllBill } = require('../controller');
+    createOneBill, BulkCreateBill, findCustomer, submitAllBill,
+    anularDte } = require('../controller');
 const path = require('path');
 const multer = require('multer');
 
@@ -94,14 +95,14 @@ router.get('/api/bill/findOrCreate', async function (req, res) {
 });
 
 //PASO 3
-router.post('/api/bill/submitbill',  function (req, res) {
+router.post('/api/bill/submitbill', function (req, res) {
     //console.log(req); submitbill
     /*   req.body.companynit = '94501110101012';
       req.body.user = '94501110101012';
       req.body.password = 'SpiritAirline@2023';
       req.body.passwordPri = 'impuestos2016'; */
 
-     findCustomer(req)
+    findCustomer(req)
         .then((customer) => {
             if (customer) {
                 submitBill(req, res, customer)
@@ -115,17 +116,31 @@ router.post('/api/bill/submitbill',  function (req, res) {
 
 });
 
-router.post('/api/bill/submitAllbill',  function (req, res) {
+router.post('/api/bill/submitAllbill', function (req, res) {
     //console.log(req);
     /*   req.body.companynit = '94501110101012';
       req.body.user = '94501110101012';
       req.body.password = 'SpiritAirline@2023';
       req.body.passwordPri = 'impuestos2016'; */
 
-     findCustomer(req)
+    findCustomer(req)
         .then((customer) => {
             if (customer) {
-                submitAllBill(req, res, customer)
+                let queryOptions = {};
+                // Si emailFilter tiene un valor, agregar el filtro
+                if (req.body.NumeroControl.length > 0) {
+                    queryOptions.where = {
+                        Status: req.body.status,
+                        customerguid: customer.customerguid,
+                        NumeroControl: req.body.NumeroControl
+                    };
+                } else {
+                    queryOptions.where = {
+                        Status: req.body.status,
+                        customerguid: customer.customerguid
+                    };
+                }
+                submitAllBill(req, customer, queryOptions)
                     .then((resp) => { res.status(200).send({ resp }) })
                     .catch(error => { res.status(400).send({ error }) });
             } else {
@@ -149,7 +164,7 @@ router.post('/api/bill/uploadFile', upload.single('file'), function (req, res, n
     const customerguid = fileName.split('_')[0];
     req.body.customerguid = customerguid;
     let contadorFileasDoc = 0;
-    let resumFile = {};
+
     try {
         //req.body.companynit = '94501110101012';
         findCustomer(req).then((customer) => {
@@ -187,8 +202,8 @@ router.post('/api/bill/uploadFile', upload.single('file'), function (req, res, n
 
 
         //res.status(200).send('Fin del proceso');
-        res.status(200).send({  
-            endProces:true,           
+        res.status(200).send({
+            endProces: true,
             reportProgress: true,
             observe: 'events'//now when you will subscribe you will get the events, in his case he neded responseType: 'blob', because from the back end he was receiving the blob too.
         });
@@ -201,6 +216,18 @@ router.post('/api/bill/uploadFile', upload.single('file'), function (req, res, n
     //res.status(200).send('Fin del proceso');
 });
 
+router.post('/api/bill/anulardte', function (req, res) {
+    findCustomer(req)
+        .then((customer) => {
+            if (customer) {
+                anularDte(req, res, customer)
+                    .then((resp) => { res.status(200).send({ resp }) })
+                    .catch(error => { res.status(400).send({ error }) });
+            } else {
+                res.status(200).send('No se encontro el customer');
+            }
+        })
+});
 
 
 module.exports = router;

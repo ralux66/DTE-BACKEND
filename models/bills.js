@@ -36,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
     Status: DataTypes.CHAR,
     SubmitDte: DataTypes.DATE,
     BatchTransaction: DataTypes.STRING,
+    selloRecibido: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'bills',

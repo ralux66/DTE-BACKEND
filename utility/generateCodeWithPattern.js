@@ -36,12 +36,27 @@ const GenerateCodigo = () => {
     return numeroGenerado;
 }
 
+const GenerateCodigoR= () =>{
+    const caracteres = 'ABCDEF0123456789';
+    let codigo = '';
 
+    // Generar las diferentes partes del código
+    const partes = [8, 4, 4, 4, 12];
+    for (let i = 0; i < partes.length; i++) {
+        for (let j = 0; j < partes[i]; j++) {
+            codigo += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+        }
+        if (i < partes.length - 1) {
+            codigo += '-';
+        }
+    }
 
-
+    return codigo;
+}
 
 
 module.exports = {
     GenerateCorrelativoDTE,
-    GenerateCodigo
+    GenerateCodigo,
+    GenerateCodigoR
 }

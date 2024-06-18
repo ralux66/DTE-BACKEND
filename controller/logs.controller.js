@@ -27,7 +27,9 @@ module.exports = {
                 where: {
                     companyguid: req.body.companyguid,
                 },
-                order: ['fecha_hora'],
+                order: [
+                    ['fecha_hora', 'DESC']
+                ]
             });
           
     },

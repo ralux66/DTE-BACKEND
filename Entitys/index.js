@@ -1,5 +1,9 @@
-const {ObjectBillDte} =require('../Entitys/bill.entity')
+const {dteFactura} =require('../Entitys/dteFactura')
+const {dteFacturaAnular} =require('../Entitys/dteAnulacion')
+const {dteCreditoFiscal} =require('../Entitys/dteCreditoFiscal')
 
 module.exports={
-    ObjectBillDte,
+    dteFactura,
+    dteFacturaAnular,
+    dteCreditoFiscal
 }

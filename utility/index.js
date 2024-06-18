@@ -1,10 +1,11 @@
-const { readExcel,readExcelByName } = require('./readExcel');
+const { readExcel, readExcelByName } = require('./readExcel');
 const { validateBillExist } = require('./formatDate');
-const { numeroALetrasConDecimales,decimalALetras } = require('./convertAmountToText');
+const { numeroALetrasConDecimales, decimalALetras } = require('./convertAmountToText');
 const { httpClient } = require('./httpClient');
-const { dateFormat,obtenerHoraConFormato } = require('./formatDate');
+const { dateFormat, obtenerHoraConFormato } = require('./formatDate');
 const { v4: uuid } = require('uuid');
-const { GenerateCorrelativoDTE,GenerateCodigo } = require('./generateCodeWithPattern');
+const { GenerateCorrelativoDTE, GenerateCodigo,GenerateCodigoR } = require('./generateCodeWithPattern');
+const convertToDte = require('./convertToDte');
 
 module.exports = {
     readExcel,
@@ -17,5 +18,7 @@ module.exports = {
     GenerateCodigo,
     decimalALetras,
     readExcelByName,
-    obtenerHoraConFormato
+    obtenerHoraConFormato,
+    convertToDte,
+    GenerateCodigoR
 }

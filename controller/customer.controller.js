@@ -1,7 +1,7 @@
 //const utility = require("../utility/readExcel")
 
 const customer = require('../models').customers;
- 
+
 //const { crearBillDte } = require('../Entitys');
 
 module.exports = {
@@ -29,16 +29,16 @@ module.exports = {
      * @param {*} _ 
      * @param {*} res 
      */
-     listCustomer(  req) {
+    listCustomer(req) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'List all the games'
-        return  customer.findAll({
+        return customer.findAll({
             where: {
                 customerguid: req.body.customerguid,
             }
         });
-           /*  .then(customer => res.status(200).send(customer))
-            .catch(error => res.status(400).send(error)) */
+        /*  .then(customer => res.status(200).send(customer))
+         .catch(error => res.status(400).send(error)) */
     },
 
     /**
@@ -53,16 +53,16 @@ module.exports = {
      * @param {*} req 
      * @param {*} res 
      */
-     findCustomer(req) {
+    findCustomer(req) {
         // #swagger.tags = ['Games'];
         // #swagger.description = 'Find a game'
-        return  customer
+        return customer
             .findOne({
                 where: {
                     customerguid: req.body.customerguid,
                 }
             });
-          
+
     },
 
 
@@ -98,6 +98,28 @@ module.exports = {
             });
 
         return response;
-
     },
+
+    tokenDteLogin(customer) {
+        const postAUTH_DTE = {
+            method: 'post',
+            url: process.env.AUTH_DTE,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            data: {
+                user: customer.userapi,
+                pwd: customer.passwordauth
+            }
+        };
+        httpClient.postplus(
+            postAUTH_DTE
+        ).then((authdte) => {
+            if (authdte) {
+                return authdte;
+            } else {
+                return null;
+            }
+        });
+    }
+
+
 }

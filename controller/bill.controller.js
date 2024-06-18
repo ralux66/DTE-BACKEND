@@ -1,9 +1,8 @@
 //const { v4: uuidv4 } = require('uuid');
 const bill = require('../models').bills;
 const logs = require('../models').logs;
-const config = require('../config/config');
-const { httpClient, uuid } = require('../utility')
-const { ObjectBillDte } = require('../Entitys');
+const { httpClient, uuid, convertToDte, decimalALetras, dateFormat, obtenerHoraConFormato, GenerateCodigoR } = require('../utility')
+//const { ObjectBillDte } = require('../Entitys'); const {  } = require('../utility');
 const axios = require('axios');
 
 
@@ -217,7 +216,7 @@ module.exports = {
                 if (billResult) {
                     for (let index = 0; index <= billResult.length - 1; index++) {
                         const element = billResult[index];
-                        const json_value_dte = ObjectBillDte(customer, element, index + 1);
+                        const json_value_dte = convertToDte.ObjectBillDte(customer, element, 'Factura', dateFormat, obtenerHoraConFormato, decimalALetras); //ObjectBillDte(customer, element, index + 1);
 
                         const postFIRMADTE = {
                             method: 'post',
@@ -253,7 +252,7 @@ module.exports = {
                                         url: process.env.RECEPCION_DTE, //config.RECEPCION_DTE,config.LOTE_DTE
                                         headers: { Authorization: authdte.body.token, 'Content-Type': 'application/json' },
                                         data: {
-                                            ambiente: '00',
+                                            ambiente: process.env.AMBIENTE_SYS,
                                             idEnvio: Math.floor(Math.random() * 10),
                                             version: 1,
                                             tipoDte: '01',
@@ -262,10 +261,9 @@ module.exports = {
                                             //documentos: FirmaAut.body,
                                             codigoGeneracion: uuid()
                                         }
-                                    }).then(async resp => {
-                                        // console.log('response-->' + resp);
-
+                                    }).then(resp => {
                                         element.Status = 'E';
+                                        element.selloRecibido = resp.data.selloRecibido; //Codigo de recepcion
                                         element.SubmitDte = new Date();
                                         element.save();
                                         //updateBill(element, customer); //UPDATE BILL
@@ -287,8 +285,8 @@ module.exports = {
                                             datos: element.NumeroControl
                                         });
 
-                                        console.log(error.response?.data?.descripcionMsg);
-                                        console.log(error.response?.data);
+                                        /* console.log(error.response?.data?.descripcionMsg);
+                                        console.log(error.response?.data); */
                                     });
                                 } else {
                                     logs.create({
@@ -319,20 +317,16 @@ module.exports = {
         //.catch(error => res.status(500).send(error))
     },
 
-     submitAllBill(req, res, customer) {
-        return  bill
-            .findAll({
-                where: {
-                    Status: req.body.status,
-                    customerguid: customer.customerguid,
-                    // NumeroControl: req.body.NumeroControl
-                }
-            })
+    submitAllBill(req, customer, queryOptions) {
+        return bill
+            .findAll(
+                queryOptions
+            )
             .then(billResult => {
                 if (billResult) {
                     for (let index = 0; index <= billResult.length - 1; index++) {
                         const element = billResult[index];
-                        const json_value_dte = ObjectBillDte(customer, element, index + 1);
+                        const json_value_dte = convertToDte.ObjectBillDte(customer, element, 'Factura', dateFormat, obtenerHoraConFormato, decimalALetras); //ObjectBillDte(customer, element, index + 1);
 
                         const postFIRMADTE = {
                             method: 'post',
@@ -360,7 +354,6 @@ module.exports = {
                             httpClient.postplus(
                                 postAUTH_DTE
                             ).then((authdte) => {
-
                                 // console.log('auth-->' + authdte.body.token);
                                 if (authdte) {
                                     axios({
@@ -368,7 +361,7 @@ module.exports = {
                                         url: process.env.RECEPCION_DTE, //config.RECEPCION_DTE,config.LOTE_DTE
                                         headers: { Authorization: authdte.body.token, 'Content-Type': 'application/json' },
                                         data: {
-                                            ambiente: '00',
+                                            ambiente: process.env.AMBIENTE_SYS,
                                             idEnvio: Math.floor(Math.random() * 10),
                                             version: 1,
                                             tipoDte: '01',
@@ -378,9 +371,8 @@ module.exports = {
                                             codigoGeneracion: uuid()
                                         }
                                     }).then(async resp => {
-                                        //console.log('response-->' + resp);
-
                                         element.Status = 'E';
+                                        element.selloRecibido = resp.data.selloRecibido; //Codigo de recepcion
                                         element.SubmitDte = new Date();
                                         element.save();
                                         //updateBill(element, customer); //UPDATE BILL
@@ -434,8 +426,8 @@ module.exports = {
         //.catch(error => res.status(500).send(error))
     },
 
-    async updateBill(element, customer) {
-        await User.update(
+    updateBill(element, customer) {
+        User.update(
             { Status: 'E' },
             {
                 where: {
@@ -446,6 +438,7 @@ module.exports = {
             },
         );
     },
+
     createBill(element, email) {
         const response = bill
             .findOrCreate({
@@ -483,4 +476,114 @@ module.exports = {
         /* .then((bill) =>  bill)
         .catch((error) => error) */
     },
+
+    anularDte(req, res, customer) {
+        return bill
+            .findAll({
+                where: {
+                    Status: req.body.status,
+                    customerguid: customer.customerguid,
+                    NumeroControl: req.body.NumeroControl
+                }
+            })
+            .then(billResult => {
+                if (billResult) {
+                    for (let index = 0; index <= billResult.length - 1; index++) {
+                        const element = billResult[index];
+                        const json_value_dte = convertToDte.ObjectBillDte(customer, element, 'Anuarl', dateFormat, obtenerHoraConFormato, GenerateCodigoR); //ObjectBillDte(customer, element, index + 1);
+
+                        const postFIRMADTE = {
+                            method: 'post',
+                            url: process.env.FIRMADOR_LOCAL,
+                            headers: { 'Content-Type': 'application/json' },
+                            data: {
+                                nit: customer.nit,
+                                passwordPri: req.body.passwordfirmardocumento,
+                                dteJson: json_value_dte //dteSend
+                            }
+                        };
+
+                        httpClient.postplus(
+                            postFIRMADTE
+                        ).then((FirmaAut) => {
+                            const postAUTH_DTE = {
+                                method: 'post',
+                                url: process.env.AUTH_DTE,
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                data: {
+                                    user: req.body.userapi,
+                                    pwd: req.body.passwordauth
+                                }
+                            };
+                            httpClient.postplus(
+                                postAUTH_DTE
+                            ).then((authdte) => {
+
+                                // console.log('auth-->' + authdte.body.token);
+                                if (authdte) {
+                                    axios({
+                                        method: 'post',
+                                        url: process.env.DTE_ANULAR, //config.RECEPCION_DTE,config.LOTE_DTE
+                                        headers: { Authorization: authdte.body.token, 'Content-Type': 'application/json' },
+                                        data: {
+                                            ambiente: process.env.AMBIENTE_SYS,
+                                            idEnvio: Math.floor(Math.random() * 10),
+                                            version: 2,
+                                            documento: FirmaAut.body
+                                        }
+                                    }).then(resp => {
+                                        element.Status = 'N';
+                                        //element.selloRecibido = resp.data.selloRecibido; //Codigo de recepcion
+                                        element.SubmitDte = new Date();
+                                        element.save();
+                                        //updateBill(element, customer); //UPDATE BILL
+                                    }).catch((error) => {
+                                        let observacionesDTE = '';
+                                        //se crea el log del error.
+                                        //warning del caso
+                                        error.response?.data?.observaciones?.forEach(item => {
+                                            observacionesDTE += item + ", ";
+                                            //console.log(item)
+                                        });
+
+                                        logs.create({
+                                            companyguid: customer.customerguid,
+                                            fecha_hora: new Date(),
+                                            nive: 'ANULAR_DTE',
+                                            origen: 'DTE-ANULAR', //JSON.stringify(json_value_dte),
+                                            mensaje: observacionesDTE.length > 0 ? observacionesDTE : error?.response?.data?.descripcionMsg ?? error,
+                                            datos: element.NumeroControl
+                                        });
+
+                                        /* console.log(error.response?.data?.descripcionMsg);
+                                        console.log(error.response?.data); */
+                                    });
+                                } else {
+                                    logs.create({
+                                        companyguid: customer.customerguid,
+                                        fecha_hora: new Date(),
+                                        nive: 'AUTH_DTE',
+                                        origen: 'authdte.body.token', //JSON.stringify(json_value_dte),
+                                        mensaje: 'Token null no se autentico',
+                                        datos: element.NumeroControl
+                                    });
+                                }
+                            })
+                            //.catch(error => res.status(400).send({ error }));
+                        })
+                        //.catch(error => res.status(500).send(error))
+                    };
+                } else {
+                    logs.create({
+                        companyguid: customer.customerguid,
+                        fecha_hora: new Date(),
+                        nive: 'find bill',
+                        origen: 'DTE-FIND-BILL', //JSON.stringify(json_value_dte),
+                        mensaje: 'Bill no encontrados-- > billResult ' + billResult.length,
+                        datos: 'NA'
+                    });
+                };
+            })
+        //.catch(error => res.status(500).send(error))
+    }
 }
