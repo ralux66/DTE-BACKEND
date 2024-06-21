@@ -2,10 +2,17 @@
 const express = require('express');
 const router = express.Router();
 const { readExcel, GenerateCorrelativoDTE, GenerateCodigo, readExcelByName } = require("../utility");
-const { submitBill, findBillByCompany,
-    findAndCountAllBill, createBill,
-    createOneBill, BulkCreateBill, findCustomer, submitAllBill,
-    anularDte } = require('../controller');
+const {
+    submitBill,
+    findBillByCompany,
+    findAndCountAllBill,
+    createBill,
+    createOneBill,
+    BulkCreateBill,
+    findCustomer,
+    submitAllBill,
+    anularDte,
+    contingenciaDte } = require('../controller');
 const path = require('path');
 const multer = require('multer');
 
@@ -216,11 +223,25 @@ router.post('/api/bill/uploadFile', upload.single('file'), function (req, res, n
     //res.status(200).send('Fin del proceso');
 });
 
+
 router.post('/api/bill/anulardte', function (req, res) {
     findCustomer(req)
         .then((customer) => {
             if (customer) {
-                anularDte(req, res, customer)
+                anularDte(req, customer)
+                    .then((resp) => { res.status(200).send({ resp }) })
+                    .catch(error => { error.status(400).send({ error }) });
+            } else {
+                res.status(200).send('No se encontro el customer');
+            }
+        })
+});
+
+router.post('/api/bill/contingencia', async function (req, res) {
+   await findCustomer(req)
+        .then(async (customer) => {
+            if (customer) {
+               await contingenciaDte(req, customer)
                     .then((resp) => { res.status(200).send({ resp }) })
                     .catch(error => { res.status(400).send({ error }) });
             } else {

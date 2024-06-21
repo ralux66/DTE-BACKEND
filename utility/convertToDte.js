@@ -1,4 +1,4 @@
-const { dteFactura, dteCreditoFiscal, dteFacturaAnular } = require('../Entitys');
+const { dteFactura, dteCreditoFiscal, dteFacturaAnular,dteContingencia } = require('../Entitys');
 
 
 module.exports = {
@@ -9,12 +9,15 @@ module.exports = {
             case 'Factura':
                 dte = dteFactura(elementBill, customer, dateFormat, obtenerHoraConFormato, decimalALetras);
                 break;
-             case 'CreditoFiscal':
-                 dte = dteCreditoFiscal(elementBill, customer, dateFormat, obtenerHoraConFormato, decimalALetras);
-                 break;
-             case 'Anuarl':
-                 dte = dteFacturaAnular(customer,elementBill, dateFormat, obtenerHoraConFormato, decimalALetras);
-                 break;
+            case 'CreditoFiscal':
+                dte = dteCreditoFiscal(elementBill, customer, dateFormat, obtenerHoraConFormato, decimalALetras);
+                break;
+            case 'Anuarl':
+                dte = dteFacturaAnular(customer, elementBill, dateFormat, obtenerHoraConFormato, decimalALetras);
+                break;
+            case 'Contigencia':
+                dte = dteContingencia(customer, elementBill, dateFormat, obtenerHoraConFormato, decimalALetras);
+                break;
             default:
                 break;
         }

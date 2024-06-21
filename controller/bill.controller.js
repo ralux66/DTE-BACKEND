@@ -477,7 +477,7 @@ module.exports = {
         .catch((error) => error) */
     },
 
-    anularDte(req, res, customer) {
+    anularDte(req, customer) {
         return bill
             .findAll({
                 where: {
@@ -551,6 +551,136 @@ module.exports = {
                                             fecha_hora: new Date(),
                                             nive: 'ANULAR_DTE',
                                             origen: 'DTE-ANULAR', //JSON.stringify(json_value_dte),
+                                            mensaje: observacionesDTE.length > 0 ? observacionesDTE : error?.response?.data?.descripcionMsg ?? error,
+                                            datos: element.NumeroControl
+                                        });
+
+                                        /* console.log(error.response?.data?.descripcionMsg);
+                                        console.log(error.response?.data); */
+                                    });
+                                } else {
+                                    logs.create({
+                                        companyguid: customer.customerguid,
+                                        fecha_hora: new Date(),
+                                        nive: 'AUTH_DTE',
+                                        origen: 'authdte.body.token', //JSON.stringify(json_value_dte),
+                                        mensaje: 'Token null no se autentico',
+                                        datos: element.NumeroControl
+                                    });
+                                }
+                            })
+                            //.catch(error => res.status(400).send({ error }));
+                        })
+                        //.catch(error => res.status(500).send(error))
+                    };
+                } else {
+                    logs.create({
+                        companyguid: customer.customerguid,
+                        fecha_hora: new Date(),
+                        nive: 'find bill',
+                        origen: 'DTE-FIND-BILL', //JSON.stringify(json_value_dte),
+                        mensaje: 'Bill no encontrados-- > billResult ' + billResult.length,
+                        datos: 'NA'
+                    });
+                };
+            })
+        //.catch(error => res.status(500).send(error))
+    },
+
+
+    async contingenciaDte(req, customer) {
+        return bill
+            .findAll({
+                where: {
+                    Status: req.body.status,
+                    customerguid: customer.customerguid,
+                    NumeroControl: req.body.NumeroControl
+                }
+            })
+            .then(billResult => {
+                if (billResult) {
+                    for (let index = 0; index <= billResult.length - 1; index++) {
+                        const element = billResult[index];
+                        const json_value_dte = convertToDte.ObjectBillDte(customer, element, 'Contigencia', dateFormat, obtenerHoraConFormato, GenerateCodigoR); //ObjectBillDte(customer, element, index + 1);
+
+                        const postFIRMADTE = {
+                            method: 'post',
+                            url: process.env.FIRMADOR_LOCAL,
+                            headers: { 'Content-Type': 'application/json' },
+                            data: {
+                                nit: customer.nit,
+                                passwordPri: req.body.passwordfirmardocumento,
+                                dteJson: json_value_dte //dteSend
+                            }
+                        };
+
+                        httpClient.postplus(
+                            postFIRMADTE
+                        ).then((FirmaAut) => {
+                            const postAUTH_DTE = {
+                                method: 'post',
+                                url: process.env.AUTH_DTE,
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                data: {
+                                    user: req.body.userapi,
+                                    pwd: req.body.passwordauth
+                                }
+                            };
+                            httpClient.postplus(
+                                postAUTH_DTE
+                            ).then((authdte) => {
+                                // console.log('auth-->' + authdte.body.token);
+                                if (authdte) {
+                                    axios({
+                                        method: 'post',
+                                        url: process.env.DTE_CONTINGENTE, //config.RECEPCION_DTE,config.LOTE_DTE
+                                        headers: { Authorization: authdte.body.token, 'Content-Type': 'application/json' },
+                                        data: {
+                                            ambiente: process.env.AMBIENTE_SYS,
+                                            idEnvio: Math.floor(Math.random() * 10),
+                                            version: 3,
+                                            documento: FirmaAut.body
+                                        }
+                                    }).then(resp => {
+                                        if (resp && resp.data.estado != 'RECHAZADO') {
+                                           // console.log({ resp })
+                                            element.Status = 'C';
+                                            element.selloRecibido = resp.data.selloRecibido; //Codigo de recepcion
+                                            element.SubmitDte = new Date();
+                                            element.save();
+                                        }else{
+                                            let observacionesDTE = '';
+                                            //se crea el log del error.
+                                            //warning del caso
+                                            resp?.data?.observaciones?.forEach(item => {
+                                                observacionesDTE += item + ", ";
+                                                //console.log(item)
+                                            });
+                                            logs.create({
+                                                companyguid: customer.customerguid,
+                                                fecha_hora: new Date(),
+                                                nive: 'CONTINGENTE_DTE',
+                                                origen: 'DTE-CONTINGENTE',
+                                                mensaje: observacionesDTE.length > 0 ? observacionesDTE : resp?.response?.data?.descripcionMsg ?? resp.data,
+                                                datos: element.NumeroControl
+                                            });
+                                        };
+
+                                        //updateBill(element, customer); //UPDATE BILL
+                                    }).catch((error) => {
+                                        let observacionesDTE = '';
+                                        //se crea el log del error.
+                                        //warning del caso
+                                        error.response?.data?.observaciones?.forEach(item => {
+                                            observacionesDTE += item + ", ";
+                                            //console.log(item)
+                                        });
+
+                                        logs.create({
+                                            companyguid: customer.customerguid,
+                                            fecha_hora: new Date(),
+                                            nive: 'CONTINGENTE_DTE',
+                                            origen: 'DTE-CONTINGENTE', //JSON.stringify(json_value_dte),
                                             mensaje: observacionesDTE.length > 0 ? observacionesDTE : error?.response?.data?.descripcionMsg ?? error,
                                             datos: element.NumeroControl
                                         });

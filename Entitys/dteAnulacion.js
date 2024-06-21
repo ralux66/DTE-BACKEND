@@ -47,7 +47,7 @@ const dteFacturaAnular = (customer,elementBill, dateFormat, obtenerHoraConFormat
 
   // motivo
   dte.motivo = {
-    tipoAnulacion: 2,
+    tipoAnulacion: 2, //Rescindir de la operación realizada.
     motivoAnulacion: 'Anulacion factura: '+elementBill.NumeroControl,
     nombreResponsable: customer.nombreComercial,
     tipDocResponsable: '36', //nit 

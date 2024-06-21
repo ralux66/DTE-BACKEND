@@ -1,5 +1,5 @@
 const { BulkCreateBill, createOneBill, findBillByCompany, findOrCreateBill,
-    findAndCountAllBill, createBill, submitBill, submitAllBill,anularDte } = require('./bill.controller');
+    findAndCountAllBill, createBill, submitBill, submitAllBill,anularDte,contingenciaDte } = require('./bill.controller');
 const { createCustomer, listCustomer, findCustomer } = require('./customer.controller');
 const {  findUser } = require('./user.controller');
 const { listlogsbycompanyguid } = require('./logs.controller');
@@ -17,5 +17,6 @@ module.exports = {
     submitAllBill,
     listlogsbycompanyguid,
     findUser,
-    anularDte
+    anularDte,
+    contingenciaDte
 }
