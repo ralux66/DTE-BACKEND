@@ -15,6 +15,7 @@ const {
     contingenciaDte } = require('../controller');
 const path = require('path');
 const multer = require('multer');
+const moment = require('moment-timezone');
 
 
 const storage = multer.diskStorage({
@@ -196,8 +197,8 @@ router.post('/api/bill/uploadFile', upload.single('file'), function (req, res, n
                                 element.Base = parseFloat(element.Base);
                                 element.SV = parseFloat(element.SV);
                                 ///YYYY-MM-DD DB new Date(Date.UTC(2018, 11, 1, 0, 0, 0));
-                                element.BookingDate = new Date(`${partes[2]}-${partes[1]}-${partes[0]}`).toUTCString();
-                                element.FlightDate = new Date(`${parteFlight[2]}-${parteFlight[1]}-${parteFlight[0]}`).toUTCString();
+                                element.BookingDate = moment.tz(`${partes[2]}-${partes[1]}-${partes[0]}`, 'YYYY-MM-DD', 'America/Mexico_City');
+                                element.FlightDate = moment.tz(`${parteFlight[2]}-${parteFlight[1]}-${parteFlight[0]}`, 'YYYY-MM-DD', 'America/Mexico_City');
                                 
                                 /* element.BookingDate = new Date(element.BookingDate);
                                 element.FlightDate = new Date(element.FlightDate); */
