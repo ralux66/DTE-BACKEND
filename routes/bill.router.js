@@ -186,14 +186,23 @@ router.post('/api/bill/uploadFile', upload.single('file'), function (req, res, n
                             if (typeof element.RecLoc !== "undefined" && parseFloat(element.Base) > 0) {
                                 contadorFileasDoc += 1;
                                 lastBill += 1;
+                                
+                                let partes = element.BookingDate.split('/'); //26/06/2024
+                                let parteFlight = element.FlightDate.split('/');
                                 //const DTE_Control = GenerateCorrelativoDTE(customer.nrc, lastBill);
                                 element.customerguid = customer.customerguid;
                                 element.NumeroControl = GenerateCorrelativoDTE(customer.nrc, lastBill);
                                 element.CodigoGeneracion = GenerateCodigo();
                                 element.Base = parseFloat(element.Base);
                                 element.SV = parseFloat(element.SV);
-                                element.BookingDate = new Date(element.BookingDate);
-                                element.FlightDate = new Date(element.FlightDate);
+                                ///YYYY-MM-DD DB new Date(Date.UTC(2018, 11, 1, 0, 0, 0));
+                                element.BookingDate = new Date(`${partes[2]}-${partes[1]}-${partes[0]}`).toUTCString();
+                                element.FlightDate = new Date(`${parteFlight[2]}-${parteFlight[1]}-${parteFlight[0]}`).toUTCString();
+                                
+                                /* element.BookingDate = new Date(element.BookingDate);
+                                element.FlightDate = new Date(element.FlightDate); */
+
+
                                 element.BatchTransaction = loteTransaction;
                                 //create bill on table
                                 createBill(element, customer.correo).then(result => {
@@ -238,10 +247,10 @@ router.post('/api/bill/anulardte', function (req, res) {
 });
 
 router.post('/api/bill/contingencia', async function (req, res) {
-   await findCustomer(req)
+    await findCustomer(req)
         .then(async (customer) => {
             if (customer) {
-               await contingenciaDte(req, customer)
+                await contingenciaDte(req, customer)
                     .then((resp) => { res.status(200).send({ resp }) })
                     .catch(error => { res.status(400).send({ error }) });
             } else {
