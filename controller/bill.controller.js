@@ -539,10 +539,11 @@ module.exports = {
                                         //updateBill(element, customer); //UPDATE BILL
                                     }).catch((error) => {
                                         let observacionesDTE = '';
+                                        
                                         //se crea el log del error.
                                         //warning del caso
                                         error.response?.data?.observaciones?.forEach(item => {
-                                            observacionesDTE += item + ", ";
+                                            observacionesDTE += item + ", "+element.fecha_hora;
                                             //console.log(item)
                                         });
 

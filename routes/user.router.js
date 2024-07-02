@@ -11,7 +11,7 @@ var md5 = require('js-md5');
 }); */
 
 router.post('/api/user/getUserByPassword', function (req, res) {
-    // console.log(req.body.password);
+    //console.log(req.body.password);
     findUser(req)
         .then((user) => {
             if (user) {

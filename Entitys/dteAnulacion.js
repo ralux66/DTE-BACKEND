@@ -3,9 +3,11 @@ const dteFacturaAnular = (customer,elementBill, dateFormat, obtenerHoraConFormat
   const date = new Date();
   const baseMont = Number(elementBill.Base.toFixed(2));
   const ivaMont = Number(elementBill.SV.toFixed(2));
-  const montoTotalStr = (baseMont + ivaMont).toFixed(2);
-  const montoTotal = Number((baseMont + ivaMont).toFixed(2));
+/*   const montoTotalStr = (baseMont + ivaMont).toFixed(2);
+  const montoTotal = Number((baseMont + ivaMont).toFixed(2)); */
 
+console.log("dateFormat-->"+dateFormat(date));
+console.log("obtenerHoraConFormato-->"+obtenerHoraConFormato(date));
   // Identificacion
   dte.identificacion = {
     version: 2,
