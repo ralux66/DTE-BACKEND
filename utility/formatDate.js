@@ -6,7 +6,7 @@ const dateFormat = (date) => {
     //let partes = date.split('/');
     //var dec = moment(date).getHours();
 
-    var d = moment.tz(date, 'YYYY-MM-DD', 'America/Mexico_City').format();//new Date(date),
+    var d = moment.tz(date, 'YYYY-MM-DD', 'America/Mexico_City').format('YYYY-MM-DD');//new Date(date),
 
      /*    month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
