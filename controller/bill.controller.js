@@ -317,12 +317,12 @@ module.exports = {
         //.catch(error => res.status(500).send(error))
     },
 
-    submitAllBill(req, customer, queryOptions) {
-        return bill
+   async submitAllBill(req, customer, queryOptions) {
+        return await bill
             .findAll(
                 queryOptions
             )
-            .then(billResult => {
+            .then(async (billResult) => {
                 if (billResult) {
                     for (let index = 0; index <= billResult.length - 1; index++) {
                         const element = billResult[index];
@@ -339,9 +339,9 @@ module.exports = {
                             }
                         };
 
-                        httpClient.postplus(
+                        await httpClient.postplus(
                             postFIRMADTE
-                        ).then((FirmaAut) => {
+                        ).then(async (FirmaAut) => {
                             const postAUTH_DTE = {
                                 method: 'post',
                                 url: process.env.AUTH_DTE,
@@ -351,12 +351,12 @@ module.exports = {
                                     pwd: req.body.passwordauth
                                 }
                             };
-                            httpClient.postplus(
+                           await httpClient.postplus(
                                 postAUTH_DTE
-                            ).then((authdte) => {
+                            ).then( async (authdte) => {
                                 // console.log('auth-->' + authdte.body.token);
                                 if (authdte) {
-                                    axios({
+                                    await axios({
                                         method: 'post',
                                         url: process.env.RECEPCION_DTE, //config.RECEPCION_DTE,config.LOTE_DTE
                                         headers: { Authorization: authdte.body.token, 'Content-Type': 'application/json' },
@@ -374,9 +374,9 @@ module.exports = {
                                         element.Status = 'E';
                                         element.selloRecibido = resp.data.selloRecibido; //Codigo de recepcion
                                         element.SubmitDte = new Date();
-                                        element.save();
+                                        await element.save();
                                         //updateBill(element, customer); //UPDATE BILL
-                                    }).catch((error) => {
+                                    }).catch(async(error) => {
                                         let observacionesDTE = '';
                                         //se crea el log del error.
                                         //warning del caso
@@ -385,7 +385,7 @@ module.exports = {
                                             //console.log(item)
                                         });
 
-                                        logs.create({
+                                       await logs.create({
                                             companyguid: customer.customerguid,
                                             fecha_hora: new Date(),
                                             nive: 'RECEPCION_DTE',
@@ -398,7 +398,7 @@ module.exports = {
                                          console.log(error.response?.data); */
                                     });
                                 } else {
-                                    logs.create({
+                                   await logs.create({
                                         companyguid: customer.customerguid,
                                         fecha_hora: new Date(),
                                         nive: 'AUTH_DTE',
@@ -413,7 +413,7 @@ module.exports = {
                         //.catch(error => res.status(500).send(error))
                     };
                 } else {
-                    logs.create({
+                   await logs.create({
                         companyguid: customer.customerguid,
                         fecha_hora: new Date(),
                         nive: 'find bill',

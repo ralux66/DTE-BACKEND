@@ -132,7 +132,7 @@ router.post('/api/bill/submitAllbill', function (req, res) {
       req.body.passwordPri = 'impuestos2016'; */
 
     findCustomer(req)
-        .then((customer) => {
+        .then(async (customer) => {
             if (customer) {
                 let queryOptions = {};
                 // Si emailFilter tiene un valor, agregar el filtro
@@ -148,7 +148,7 @@ router.post('/api/bill/submitAllbill', function (req, res) {
                         customerguid: customer.customerguid
                     };
                 }
-                submitAllBill(req, customer, queryOptions)
+                await submitAllBill(req, customer, queryOptions)
                     .then((resp) => { res.status(200).send({ resp }) })
                     .catch(error => { res.status(400).send({ error }) });
             } else {
