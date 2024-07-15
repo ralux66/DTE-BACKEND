@@ -51,13 +51,13 @@ const dteFactura = (elementBill, customer, dateFormat, obtenerHoraConFormato, de
   // Receptor
   dte.receptor = {
     tipoDocumento: '36',
-    numDocumento: '014783212',
+    numDocumento: '027870890',
     nrc: null,
     nombre: elementBill.FirstName + " " + elementBill.LastName,
     codActividad: null,
     descActividad: null,
-    telefono: '22700227',
-    correo: 'ralux.zepeda@gmail.com',
+    telefono: '77405006', //buitra phone
+    correo: 'spiritsucursalelsavador@hotmail.com',
     direccion: null,
   };
 
