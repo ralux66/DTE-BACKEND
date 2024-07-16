@@ -176,18 +176,23 @@ router.post('/api/bill/uploadFile', upload.single('file'), function (req, res, n
     try {
         //req.body.companynit = '94501110101012';
         findCustomer(req).then((customer) => {
-            findAndCountAllBill(customer).then((bill) => {
-                let lastBill = bill.count ?? 0;
+            findAndCountAllBill(customer).then(async (bill) => {
+                //let lastBill = bill.count ?? 0;
+                let lastBill = bill ? bill.NumeroControl.split('-')[3] : 0; //DTE-01-02075433-000000000000201
+                //console.log('split--> '+lastBill);
+                lastBill = +lastBill;
+
+
                 if (customer) {
                     //console.log('file name-->' + fileName);
                     if (typeof fileName !== "undefined") {
                         const loteTransaction = customer.nrc + '-' + Date.now().toString();
                         const workbook_response = readExcelByName(fileName);
                         for (const element of workbook_response) {
-                            if (typeof element.RecLoc !== "undefined" && parseFloat(element.Base) > 0) {
+                            if (typeof element.RecLoc !== "undefined" && parseFloat(element.Base) > 0 && lastBill) {
                                 contadorFileasDoc += 1;
                                 lastBill += 1;
-                                
+
                                 let partes = element.BookingDate.split('/'); //26/06/2024
                                 let parteFlight = element.FlightDate.split('/');
                                 //const DTE_Control = GenerateCorrelativoDTE(customer.nrc, lastBill);
@@ -199,17 +204,18 @@ router.post('/api/bill/uploadFile', upload.single('file'), function (req, res, n
                                 ///YYYY-MM-DD DB new Date(Date.UTC(2018, 11, 1, 0, 0, 0));
                                 element.BookingDate = moment.tz(`${partes[2]}-${partes[1]}-${partes[0]}`, 'YYYY-MM-DD', 'America/Mexico_City');
                                 element.FlightDate = moment.tz(`${parteFlight[2]}-${parteFlight[1]}-${parteFlight[0]}`, 'YYYY-MM-DD', 'America/Mexico_City');
-                                
+
                                 /* element.BookingDate = new Date(element.BookingDate);
                                 element.FlightDate = new Date(element.FlightDate); */
 
 
                                 element.BatchTransaction = loteTransaction;
                                 //create bill on table
-                                createBill(element, customer.correo).then(result => {
-                                    console.log('Bill Create' + { result });
+                                await createBill(element, customer.correo);
+                              /*   createBill(element, customer.correo).then(result => {
+                                    //console.log('Bill Create' + { result });
                                     resumFile = { "loteTransaction": loteTransaction, "contadorFileasDoc": contadorFileasDoc }
-                                });
+                                }); */
                             }
                         }
                     }

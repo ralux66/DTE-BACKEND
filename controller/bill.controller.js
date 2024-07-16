@@ -180,10 +180,13 @@ module.exports = {
 
     findAndCountAllBill(customer) {
         return bill
-            .findAndCountAll({
+            .findOne({                
                 where: {
                     customerguid: customer.customerguid,
-                }
+                },
+                order: [
+                    ['id', 'DESC']                    
+                ]
             });
     },
 
@@ -317,7 +320,7 @@ module.exports = {
         //.catch(error => res.status(500).send(error))
     },
 
-   async submitAllBill(req, customer, queryOptions) {
+    async submitAllBill(req, customer, queryOptions) {
         return await bill
             .findAll(
                 queryOptions
@@ -351,9 +354,9 @@ module.exports = {
                                     pwd: req.body.passwordauth
                                 }
                             };
-                           await httpClient.postplus(
+                            await httpClient.postplus(
                                 postAUTH_DTE
-                            ).then( async (authdte) => {
+                            ).then(async (authdte) => {
                                 // console.log('auth-->' + authdte.body.token);
                                 if (authdte) {
                                     await axios({
@@ -376,7 +379,7 @@ module.exports = {
                                         element.SubmitDte = new Date();
                                         await element.save();
                                         //updateBill(element, customer); //UPDATE BILL
-                                    }).catch(async(error) => {
+                                    }).catch(async (error) => {
                                         let observacionesDTE = '';
                                         //se crea el log del error.
                                         //warning del caso
@@ -385,7 +388,7 @@ module.exports = {
                                             //console.log(item)
                                         });
 
-                                       await logs.create({
+                                        await logs.create({
                                             companyguid: customer.customerguid,
                                             fecha_hora: new Date(),
                                             nive: 'RECEPCION_DTE',
@@ -398,7 +401,7 @@ module.exports = {
                                          console.log(error.response?.data); */
                                     });
                                 } else {
-                                   await logs.create({
+                                    await logs.create({
                                         companyguid: customer.customerguid,
                                         fecha_hora: new Date(),
                                         nive: 'AUTH_DTE',
@@ -413,7 +416,7 @@ module.exports = {
                         //.catch(error => res.status(500).send(error))
                     };
                 } else {
-                   await logs.create({
+                    await logs.create({
                         companyguid: customer.customerguid,
                         fecha_hora: new Date(),
                         nive: 'find bill',
@@ -439,14 +442,15 @@ module.exports = {
         );
     },
 
-    createBill(element, email) {
+   async createBill(element, email) {
         const response = bill
-            .findOrCreate({
-                where: {
-                    //RecLoc: element.RecLoc ?? "",
-                    CodigoGeneracion: element.CodigoGeneracion ?? "",
-                },
-                defaults: {
+            .create(
+                {
+                    /*  where: {
+                         //RecLoc: element.RecLoc ?? "",
+                         CodigoGeneracion: element.CodigoGeneracion ?? "",
+                     },
+                     defaults: { */
                     customerguid: element.customerguid,
                     RecLoc: element.RecLoc,
                     SegSeqNbr: element.SegSeqNbr,
@@ -469,10 +473,10 @@ module.exports = {
                     CodigoGeneracion: element.CodigoGeneracion,
                     SubmitDte: null,
                     BatchTransaction: element.BatchTransaction
-                }
-            });
+                    //}
+                });
         //throw new Error('Error al crear el registro');
-        return response;
+        return await response;
         /* .then((bill) =>  bill)
         .catch((error) => error) */
     },
@@ -539,11 +543,11 @@ module.exports = {
                                         //updateBill(element, customer); //UPDATE BILL
                                     }).catch((error) => {
                                         let observacionesDTE = '';
-                                        
+
                                         //se crea el log del error.
                                         //warning del caso
                                         error.response?.data?.observaciones?.forEach(item => {
-                                            observacionesDTE += item + ", "+element.fecha_hora;
+                                            observacionesDTE += item + ", " + element.fecha_hora;
                                             //console.log(item)
                                         });
 
@@ -644,12 +648,12 @@ module.exports = {
                                         }
                                     }).then(resp => {
                                         if (resp && resp.data.estado != 'RECHAZADO') {
-                                           // console.log({ resp })
+                                            // console.log({ resp })
                                             element.Status = 'C';
                                             element.selloRecibido = resp.data.selloRecibido; //Codigo de recepcion
                                             element.SubmitDte = new Date();
                                             element.save();
-                                        }else{
+                                        } else {
                                             let observacionesDTE = '';
                                             //se crea el log del error.
                                             //warning del caso
