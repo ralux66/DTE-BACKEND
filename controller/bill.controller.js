@@ -185,7 +185,7 @@ module.exports = {
                     customerguid: customer.customerguid,
                 },
                 order: [
-                    ['id', 'DESC']                    
+                    ['NumeroControl', 'DESC']                    
                 ]
             });
     },
